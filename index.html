@@ -1,0 +1,2317 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Adlantic CRM Pro — Sales & Agency Management Hub</title>
+  
+  <!-- Tailwind CSS & Tailwind Form plugins -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  
+  <!-- Google Fonts & Material Symbols -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+
+  <!-- Tailwind Custom Config -->
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              navy: '#120a26',
+              blue: '#7c3aed',
+              accent: '#ec4899',
+              emerald: '#10B981',
+              bgLight: '#f8f6fc',
+              bgDark: '#0a0518'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      vertical-align: middle;
+    }
+    .scrollbar-hidden::-webkit-scrollbar {
+      display: none;
+    }
+    .scrollbar-hidden {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    /* Simple scale up animation for modals */
+    .animate-scale-up {
+      animation: scaleUp 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    @keyframes scaleUp {
+      from { transform: scale(0.95); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    /* Premium micro-animations for buttons */
+    .btn-animate {
+      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.2s ease, box-shadow 0.2s ease;
+      cursor: pointer;
+    }
+    .btn-animate:hover {
+      transform: scale(1.025) translateY(-1px);
+      filter: brightness(1.1);
+    }
+    .btn-animate:active {
+      transform: scale(0.97) translateY(0);
+      filter: brightness(0.95);
+    }
+  </style>
+</head>
+<body class="bg-brand-bgLight dark:bg-brand-bgDark text-slate-800 dark:text-slate-100 min-h-screen flex">
+
+  <!-- ==================== LOGIN SCREEN ==================== -->
+  <div id="login-screen" class="fixed inset-0 z-50 bg-slate-950 flex justify-center items-center p-4">
+    <!-- Background Glow -->
+    <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,_#ec4899_0%,_transparent_60%)] opacity-20 pointer-events-none"></div>
+    
+    <div class="w-full max-w-md rounded-2xl border border-slate-800 bg-slate-900/80 p-8 flex flex-col gap-6 relative shadow-2xl backdrop-blur-md animate-scale-up text-left">
+      <div class="text-center space-y-2">
+        <div class="w-20 h-20 rounded-full bg-white flex items-center justify-center mx-auto shadow-lg border border-slate-700 overflow-hidden p-0.5 animate-scale-up">
+          <img src="./logo.png" alt="Adlantic Logo" class="w-full h-full object-cover rounded-full" />
+        </div>
+        <h2 class="text-2xl font-black tracking-tight text-white mt-4">Adlantic CRM Pro</h2>
+        <p class="text-[11px] text-pink-400 font-extrabold uppercase tracking-wider mt-1">Giving wings to your company's growth</p>
+        <p class="text-[10px] text-slate-500 mt-0.5">Offline Local Management Environment</p>
+      </div>
+
+      <!-- LOGIN FORM -->
+      <form id="login-form" onsubmit="handleLoginSubmit(event)" class="space-y-4 text-xs font-semibold text-slate-350">
+        <div class="space-y-1.5">
+          <label class="text-slate-400">Username or Email (Default: admin or shivansh@gmail.com)</label>
+          <input required type="text" id="login-username" placeholder="e.g. admin or shivansh@gmail.com" class="w-full text-sm px-3 py-2 border border-slate-800 rounded-lg bg-slate-950 focus:outline-none focus:border-brand-blue text-white"/>
+        </div>
+
+        <div class="space-y-1.5">
+          <label class="text-slate-400">Password (Default: password)</label>
+          <input required type="password" id="login-password" placeholder="••••••••" class="w-full text-sm px-3 py-2 border border-slate-800 rounded-lg bg-slate-950 focus:outline-none focus:border-brand-blue text-white"/>
+        </div>
+        
+        <div id="login-error" class="text-red-500 text-[11px] font-bold hidden">Invalid email or password!</div>
+
+        <button type="submit" class="w-full bg-gradient-to-r from-brand-blue via-brand-accent to-orange-500 hover:brightness-110 text-white font-bold text-sm py-3 rounded-lg shadow-lg shadow-brand-accent/15 active:scale-95 transition-all cursor-pointer mt-2 btn-animate">
+          Login to CRM Dashboard
+        </button>
+      </form>
+
+      <!-- SIGN UP FORM (Hidden by default) -->
+      <form id="signup-form" onsubmit="handleSignupSubmit(event)" class="space-y-4 text-xs font-semibold text-slate-350 hidden">
+        <div class="space-y-1.5">
+          <label class="text-slate-400">Full Name</label>
+          <input required type="text" id="signup-name" placeholder="e.g. Shivansh" class="w-full text-sm px-3 py-2 border border-slate-800 rounded-lg bg-slate-950 focus:outline-none focus:border-brand-blue text-white"/>
+        </div>
+
+        <div class="space-y-1.5">
+          <label class="text-slate-400">Email Address (Gmail)</label>
+          <input required type="email" id="signup-email" placeholder="e.g. shivansh@gmail.com" class="w-full text-sm px-3 py-2 border border-slate-800 rounded-lg bg-slate-950 focus:outline-none focus:border-brand-blue text-white"/>
+        </div>
+
+        <div class="space-y-1.5">
+          <label class="text-slate-400">Choose Password</label>
+          <input required type="password" id="signup-password" placeholder="••••••••" class="w-full text-sm px-3 py-2 border border-slate-800 rounded-lg bg-slate-950 focus:outline-none focus:border-brand-blue text-white"/>
+        </div>
+
+        <div id="signup-error" class="text-red-500 text-[11px] font-bold hidden">This email is already registered!</div>
+        <div id="signup-success" class="text-emerald-500 text-[11px] font-bold hidden">Account created successfully! Redirecting...</div>
+
+        <button type="submit" class="w-full bg-gradient-to-r from-brand-blue via-brand-accent to-orange-500 hover:brightness-110 text-white font-bold text-sm py-3 rounded-lg shadow-lg shadow-brand-accent/15 active:scale-95 transition-all cursor-pointer mt-2 btn-animate">
+          Create Free Account
+        </button>
+      </form>
+      
+      <div id="auth-toggle-text" class="border-t border-slate-800 pt-4 text-center text-[11px] text-slate-400 font-semibold">
+        Don't have an account? <button onclick="toggleAuthForm(true)" class="text-pink-400 hover:underline font-bold bg-transparent border-0 cursor-pointer">Sign Up</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sidebar Navigation -->
+  <aside class="w-64 bg-brand-navy text-white shrink-0 flex flex-col justify-between border-r border-brand-navy/60">
+    <div>
+      <!-- Logo Banner -->
+      <div class="p-6 flex items-center gap-3 border-b border-slate-800/80">
+        <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center overflow-hidden border border-slate-750 p-0.5 shrink-0">
+          <img src="./logo.png" alt="Adlantic Logo" class="w-full h-full object-cover rounded-full" />
+        </div>
+        <div>
+          <h1 class="font-extrabold text-sm leading-tight text-white">Adlantic CRM Pro</h1>
+          <span id="company-subtitle" class="text-[8px] uppercase tracking-wider text-pink-400 font-extrabold">Giving wings to growth</span>
+        </div>
+      </div>
+
+      <!-- Menu Navigation -->
+      <nav class="p-4 space-y-1" id="sidebar-nav">
+        <button onclick="switchTab('Dashboard')" id="nav-Dashboard" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all bg-brand-blue text-white shadow-md shadow-blue-900/30 btn-animate">
+          <span class="material-symbols-outlined">dashboard</span>
+          <span>Dashboard</span>
+        </button>
+        <button onclick="switchTab('Leads')" id="nav-Leads" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all text-slate-400 hover:bg-slate-800 hover:text-white btn-animate">
+          <span class="material-symbols-outlined">person_add</span>
+          <span>Leads Registry</span>
+        </button>
+        <button onclick="switchTab('Pipeline')" id="nav-Pipeline" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all text-slate-400 hover:bg-slate-800 hover:text-white btn-animate">
+          <span class="material-symbols-outlined">handshake</span>
+          <span>Deals Pipeline</span>
+        </button>
+        <button onclick="switchTab('Tasks')" id="nav-Tasks" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all text-slate-400 hover:bg-slate-800 hover:text-white btn-animate">
+          <span class="material-symbols-outlined">check_box</span>
+          <span>Tasks Board</span>
+        </button>
+        <button onclick="switchTab('AI-Assistant')" id="nav-AI-Assistant" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all text-slate-400 hover:bg-slate-800 hover:text-white btn-animate">
+          <span class="material-symbols-outlined text-blue-400">smart_toy</span>
+          <span class="text-blue-400">AI Co-pilot</span>
+        </button>
+        <button onclick="switchTab('Team')" id="nav-Team" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all text-slate-400 hover:bg-slate-800 hover:text-white btn-animate">
+          <span class="material-symbols-outlined">groups</span>
+          <span>Team & Reports</span>
+        </button>
+        <button onclick="switchTab('Settings')" id="nav-Settings" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all text-slate-400 hover:bg-slate-800 hover:text-white btn-animate">
+          <span class="material-symbols-outlined">settings</span>
+          <span>Settings</span>
+        </button>
+      </nav>
+    </div>
+
+    <!-- Active User Card -->
+    <button onclick="openProfileModal()" class="w-full text-left p-4 border-t border-slate-800 bg-slate-950/20 hover:bg-slate-800/40 transition-all cursor-pointer block btn-animate">
+      <div class="flex items-center gap-3 p-2 rounded-lg bg-slate-800/40">
+        <div id="user-avatar-badge" class="w-10 h-10 rounded-full bg-brand-blue flex items-center justify-center font-bold text-white text-sm">S</div>
+        <div class="overflow-hidden">
+          <h4 id="user-name-badge" class="text-sm font-bold text-white truncate">Shivansh</h4>
+          <p id="user-role-badge" class="text-[10px] text-slate-400 truncate">Senior Account Manager</p>
+        </div>
+      </div>
+    </button>
+  </aside>
+
+  <!-- Main Canvas Panel -->
+  <div class="flex-grow flex flex-col min-w-0 overflow-y-auto">
+    <!-- Top Header Bar -->
+    <header class="h-16 px-8 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center sticky top-0 z-30 bg-brand-bgLight/85 dark:bg-brand-bgDark/85 backdrop-blur-md">
+      <div>
+        <h2 id="header-tab-title" class="text-lg font-bold tracking-tight">Dashboard Summary</h2>
+        <p id="header-workspace-name" class="text-[10px] text-slate-500 font-semibold uppercase tracking-wider">Workspace: Adlantic Agency</p>
+      </div>
+
+      <div class="flex items-center gap-4">
+        <!-- Theme Switch Toggle -->
+        <button onclick="toggleTheme()" class="p-2 rounded-lg border border-slate-200 dark:border-slate-800 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-all cursor-pointer btn-animate">
+          <span id="theme-icon" class="material-symbols-outlined text-[20px]">dark_mode</span>
+        </button>
+
+        <!-- Notification Trigger -->
+        <div class="relative">
+          <button class="p-2 rounded-lg border border-slate-200 dark:border-slate-800 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-all btn-animate">
+            <span class="material-symbols-outlined text-[20px]">notifications</span>
+            <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full"></span>
+          </button>
+        </div>
+
+        <!-- Add Lead Quick CTA -->
+        <button onclick="openLeadModal()" class="bg-brand-blue hover:brightness-110 text-white font-bold text-xs px-4 py-2.5 rounded-lg flex items-center gap-2 shadow-md shadow-brand-blue/15 active:scale-95 transition-all cursor-pointer btn-animate">
+          <span class="material-symbols-outlined text-[16px]">add</span>
+          <span>Add Lead</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Content Workspace -->
+    <main class="p-8 flex-grow" id="main-content-panel">
+
+      <!-- ==================== DASHBOARD VIEW ==================== -->
+      <div id="tab-Dashboard" class="space-y-8 tab-view">
+        <div class="flex justify-between items-center">
+          <div>
+            <h1 id="dashboard-greeting-title" class="text-3xl font-extrabold tracking-tight">Hello, Shivansh</h1>
+            <p class="text-slate-500 text-xs mt-1">Here is your sales and performance pipeline summary for today.</p>
+          </div>
+          <div class="px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 text-xs font-bold flex items-center gap-2">
+            <span class="material-symbols-outlined text-brand-accent text-sm">calendar_month</span>
+            <span>June 2026</span>
+          </div>
+        </div>
+
+        <!-- KPI Grid (Bento Box style) -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+          <div class="p-6 rounded-2xl border border-slate-200 dark:border-slate-850 bg-white dark:bg-slate-900/40 shadow-sm">
+            <div class="flex justify-between items-start mb-4">
+              <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Total Revenue</p>
+              <div class="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-500">
+                <span class="material-symbols-outlined text-sm">trending_up</span>
+              </div>
+            </div>
+            <h3 id="kpi-revenue" class="text-3xl font-extrabold tracking-tight">$420k</h3>
+            <p class="text-[10px] text-slate-500 font-bold mt-2">Active deals closed-won</p>
+          </div>
+
+          <div class="p-6 rounded-2xl border border-slate-200 dark:border-slate-850 bg-white dark:bg-slate-900/40 shadow-sm">
+            <div class="flex justify-between items-start mb-4">
+              <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Active Deals</p>
+              <div class="w-8 h-8 rounded-lg bg-brand-accent/10 flex items-center justify-center text-brand-accent">
+                <span class="material-symbols-outlined text-sm">work</span>
+              </div>
+            </div>
+            <h3 id="kpi-deals" class="text-3xl font-extrabold tracking-tight">24</h3>
+            <p class="text-[10px] text-slate-500 font-bold mt-2">Deals inside sales pipeline</p>
+          </div>
+
+          <div class="p-6 rounded-2xl border border-slate-200 dark:border-slate-850 bg-white dark:bg-slate-900/40 shadow-sm">
+            <div class="flex justify-between items-start mb-4">
+              <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Win Rate</p>
+              <div class="w-8 h-8 rounded-lg bg-purple-500/10 flex items-center justify-center text-purple-500">
+                <span class="material-symbols-outlined text-sm">reward</span>
+              </div>
+            </div>
+            <h3 id="kpi-winrate" class="text-3xl font-extrabold tracking-tight">68%</h3>
+            <p class="text-[10px] text-slate-500 font-bold mt-2">Sales efficiency conversion</p>
+          </div>
+
+          <div class="p-6 rounded-2xl border border-slate-200 dark:border-slate-850 bg-white dark:bg-slate-900/40 shadow-sm">
+            <div class="flex justify-between items-start mb-4">
+              <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Pipeline Value</p>
+              <div class="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center text-amber-500">
+                <span class="material-symbols-outlined text-sm">schedule</span>
+              </div>
+            </div>
+            <h3 id="kpi-pipeline" class="text-3xl font-extrabold tracking-tight">$1.2M</h3>
+            <p class="text-[10px] text-slate-500 font-bold mt-2">Forecasted total proposal size</p>
+          </div>
+        </div>
+
+        <!-- Middle Bento Section: Performance Chart & Live Activity Logs -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <!-- Monthly sales SVG Bar Chart -->
+          <div class="p-6 rounded-2xl border border-slate-200 dark:border-slate-850 bg-white dark:bg-slate-900/40 shadow-sm lg:col-span-2 flex flex-col justify-between">
+            <div class="flex justify-between items-center mb-6">
+              <div>
+                <h3 class="font-bold text-sm">Monthly Deal Progression</h3>
+                <p class="text-[11px] text-slate-500">Pipeline growth compared to targets</p>
+              </div>
+              <span class="px-2.5 py-1 rounded text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">2026</span>
+            </div>
+            
+            <div class="h-56 w-full flex items-end justify-between gap-4 px-2 pt-4">
+              <div class="flex-grow flex flex-col items-center gap-2 group cursor-pointer">
+                <div class="w-full relative flex flex-col justify-end h-40">
+                  <span class="absolute -top-7 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[9px] font-bold py-0.5 px-1.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow z-10">$220k</span>
+                  <div class="w-full bg-slate-200 dark:bg-slate-800 group-hover:bg-slate-700 rounded-t-md transition-all duration-250" style="height: 45%;"></div>
+                </div>
+                <span class="text-[10px] font-semibold text-slate-400">Jan</span>
+              </div>
+              <div class="flex-grow flex flex-col items-center gap-2 group cursor-pointer">
+                <div class="w-full relative flex flex-col justify-end h-40">
+                  <span class="absolute -top-7 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[9px] font-bold py-0.5 px-1.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow z-10">$340k</span>
+                  <div class="w-full bg-slate-200 dark:bg-slate-800 group-hover:bg-slate-700 rounded-t-md transition-all duration-250" style="height: 70%;"></div>
+                </div>
+                <span class="text-[10px] font-semibold text-slate-400">Feb</span>
+              </div>
+              <div class="flex-grow flex flex-col items-center gap-2 group cursor-pointer">
+                <div class="w-full relative flex flex-col justify-end h-40">
+                  <span class="absolute -top-7 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[9px] font-bold py-0.5 px-1.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow z-10">$290k</span>
+                  <div class="w-full bg-slate-200 dark:bg-slate-800 group-hover:bg-slate-700 rounded-t-md transition-all duration-250" style="height: 60%;"></div>
+                </div>
+                <span class="text-[10px] font-semibold text-slate-400">Mar</span>
+              </div>
+              <div class="flex-grow flex flex-col items-center gap-2 group cursor-pointer">
+                <div class="w-full relative flex flex-col justify-end h-40">
+                  <span class="absolute -top-7 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[9px] font-bold py-0.5 px-1.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow z-10">$410k</span>
+                  <div class="w-full bg-slate-200 dark:bg-slate-800 group-hover:bg-slate-700 rounded-t-md transition-all duration-250" style="height: 85%;"></div>
+                </div>
+                <span class="text-[10px] font-semibold text-slate-400">Apr</span>
+              </div>
+              <div class="flex-grow flex flex-col items-center gap-2 group cursor-pointer">
+                <div class="w-full relative flex flex-col justify-end h-40">
+                  <span class="absolute -top-7 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[9px] font-bold py-0.5 px-1.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow z-10">$480k</span>
+                  <div class="w-full bg-brand-blue rounded-t-md shadow-md shadow-brand-blue/10 transition-all duration-250" style="height: 98%;"></div>
+                </div>
+                <span class="text-[10px] font-bold text-brand-blue">May</span>
+              </div>
+              <div class="flex-grow flex flex-col items-center gap-2 group cursor-pointer">
+                <div class="w-full relative flex flex-col justify-end h-40">
+                  <span class="absolute -top-7 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[9px] font-bold py-0.5 px-1.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow z-10">$190k</span>
+                  <div class="w-full bg-slate-200 dark:bg-slate-800 group-hover:bg-slate-700 rounded-t-md transition-all duration-250" style="height: 40%;"></div>
+                </div>
+                <span class="text-[10px] font-semibold text-slate-400">Jun</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Activity log card -->
+          <div class="p-6 rounded-2xl border border-slate-200 dark:border-slate-855 bg-white dark:bg-slate-900/40 shadow-sm flex flex-col justify-between">
+            <div class="flex justify-between items-center mb-4">
+              <div>
+                <h3 class="font-bold text-sm">System Event Audits</h3>
+                <p class="text-[10px] text-slate-500">Live operational change logger</p>
+              </div>
+              <span class="material-symbols-outlined text-brand-accent text-sm">event_note</span>
+            </div>
+
+            <div id="dashboard-activity-list" class="space-y-3 overflow-y-auto max-h-52 pr-1 text-xs">
+              <!-- Rendered Dynamically -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Lower Section: Tasks checklist & Quick Operations -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <!-- Task list panel -->
+          <div class="p-6 rounded-2xl border border-slate-200 dark:border-slate-850 bg-white dark:bg-slate-900/40 shadow-sm">
+            <div class="flex justify-between items-center mb-4">
+              <h3 class="font-bold text-sm">High-Priority Operations Checklist</h3>
+              <button onclick="switchTab('Tasks')" class="text-brand-blue font-bold text-xs hover:underline">Go to Tasks</button>
+            </div>
+            
+            <div id="dashboard-task-checklist" class="space-y-3">
+              <!-- Rendered Dynamically -->
+            </div>
+          </div>
+
+          <!-- Quick Operations Grid -->
+          <div class="p-6 rounded-2xl border border-slate-200 dark:border-slate-850 bg-white dark:bg-slate-900/40 shadow-sm flex flex-col justify-between">
+            <div>
+              <h3 class="font-bold text-sm">Quick Actions</h3>
+              <p class="text-[11px] text-slate-500 mt-0.5">Quick access triggers for client operations</p>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-4 mt-6">
+              <button onclick="openLeadModal()" class="p-4 border border-slate-200 dark:border-slate-800 rounded-xl flex flex-col items-center justify-center gap-2 hover:border-brand-blue dark:hover:border-brand-blue transition-all group cursor-pointer">
+                <span class="material-symbols-outlined text-brand-accent text-[22px] group-hover:scale-110 transition-transform">person_add</span>
+                <span class="text-xs font-bold">New Lead</span>
+              </button>
+              <button onclick="openDealModal()" class="p-4 border border-slate-200 dark:border-slate-800 rounded-xl flex flex-col items-center justify-center gap-2 hover:border-brand-blue dark:hover:border-brand-blue transition-all group cursor-pointer">
+                <span class="material-symbols-outlined text-indigo-500 text-[22px] group-hover:scale-110 transition-transform">handshake</span>
+                <span class="text-xs font-bold">New Sales Deal</span>
+              </button>
+              <button onclick="openTaskModal()" class="p-4 border border-slate-200 dark:border-slate-800 rounded-xl flex flex-col items-center justify-center gap-2 hover:border-brand-blue dark:hover:border-brand-blue transition-all group cursor-pointer">
+                <span class="material-symbols-outlined text-amber-500 text-[22px] group-hover:scale-110 transition-transform">add_task</span>
+                <span class="text-xs font-bold">Assign Task</span>
+              </button>
+              <button onclick="switchTab('AI-Assistant')" class="p-4 border border-slate-200 dark:border-slate-800 rounded-xl flex flex-col items-center justify-center gap-2 hover:border-brand-blue dark:hover:border-brand-blue transition-all group cursor-pointer">
+                <span class="material-symbols-outlined text-purple-500 text-[22px] group-hover:scale-110 transition-transform">smart_toy</span>
+                <span class="text-xs font-bold">Consult AI</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== LEADS REGISTRY VIEW ==================== -->
+      <div id="tab-Leads" class="space-y-6 tab-view hidden">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div>
+            <h1 class="text-2xl font-bold tracking-tight">Recent Leads Registry</h1>
+            <p class="text-slate-500 text-xs mt-1" id="leads-count-text">Loading...</p>
+          </div>
+          <button onclick="openLeadModal()" class="bg-brand-blue hover:brightness-110 text-white font-bold text-xs px-4 py-2 rounded-lg flex items-center gap-2 cursor-pointer">
+            <span class="material-symbols-outlined text-[16px]">add</span>
+            <span>Create Lead</span>
+          </button>
+        </div>
+
+        <!-- Filter registry -->
+        <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-850 bg-white dark:bg-slate-900/40 flex flex-col md:flex-row gap-4 justify-between items-center shadow-sm">
+          <div class="relative w-full md:max-w-md">
+            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-[18px]">search</span>
+            <input type="text" id="lead-search-input" oninput="handleLeadSearch()" placeholder="Search leads by name, email, or company..." class="w-full text-sm pl-9 pr-4 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-slate-50 dark:bg-slate-950 focus:outline-none focus:border-brand-blue focus:ring-1 focus:ring-brand-blue/20 transition-all"/>
+          </div>
+
+          <div class="flex items-center gap-2 w-full md:w-auto justify-end">
+            <span class="text-xs font-bold text-slate-500">Status:</span>
+            <select id="lead-status-filter" onchange="handleLeadStatusFilter()" class="text-xs font-semibold px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-slate-50 dark:bg-slate-950 focus:outline-none focus:border-brand-blue cursor-pointer">
+              <option>All Statuses</option>
+              <option>New</option>
+              <option>Contacted</option>
+              <option>Qualified</option>
+              <option>Nurturing</option>
+              <option>Lost</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Leads Table Container -->
+        <div class="border border-slate-200 dark:border-slate-850 bg-white dark:bg-slate-900/20 rounded-xl overflow-hidden shadow-sm">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="border-b border-slate-200 dark:border-slate-800 text-xs font-bold text-slate-500 uppercase tracking-wider bg-slate-50/50 dark:bg-slate-900/50">
+                  <th class="p-4">Lead Name</th>
+                  <th class="p-4">Company</th>
+                  <th class="p-4">Status</th>
+                  <th class="p-4">Deal Value</th>
+                  <th class="p-4">Last Activity</th>
+                  <th class="p-4">Priority</th>
+                  <th class="p-4 text-center">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="leads-table-body" class="divide-y divide-slate-200/50 dark:divide-slate-800/40 text-sm">
+                <!-- Rendered Dynamically -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Pagination Footer -->
+          <div class="p-4 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between">
+            <p id="leads-pagination-info" class="text-xs text-slate-500">Showing 1-7 of 124 leads</p>
+            <div class="flex items-center gap-2">
+              <button onclick="changeLeadPage(-1)" id="btn-prev-page" class="p-1.5 border border-slate-200 dark:border-slate-800 rounded hover:bg-slate-100 dark:hover:bg-slate-900 cursor-pointer disabled:opacity-30">
+                <span class="material-symbols-outlined text-[16px]">chevron_left</span>
+              </button>
+              <span id="leads-page-indicator" class="text-xs font-bold px-2">1 / 2</span>
+              <button onclick="changeLeadPage(1)" id="btn-next-page" class="p-1.5 border border-slate-200 dark:border-slate-800 rounded hover:bg-slate-100 dark:hover:bg-slate-900 cursor-pointer disabled:opacity-30">
+                <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== DEALS PIPELINE VIEW ==================== -->
+      <div id="tab-Pipeline" class="space-y-6 tab-view hidden">
+        <div class="flex justify-between items-center">
+          <div>
+            <h1 class="text-2xl font-bold tracking-tight">Sales Deals Pipeline</h1>
+            <p class="text-slate-500 text-xs mt-1">Track proposal movements across stages</p>
+          </div>
+          <button onclick="openDealModal()" class="bg-brand-blue hover:brightness-110 text-white font-bold text-xs px-4 py-2 rounded-lg flex items-center gap-2 cursor-pointer">
+            <span class="material-symbols-outlined text-[16px]">add</span>
+            <span>Create Deal</span>
+          </button>
+        </div>
+
+        <!-- Kanban Board Lanes Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 items-stretch" id="deals-pipeline-grid">
+          <!-- Columns Rendered Dynamically -->
+        </div>
+      </div>
+
+      <!-- ==================== TASKS BOARD VIEW ==================== -->
+      <div id="tab-Tasks" class="space-y-6 tab-view hidden">
+        <div class="flex justify-between items-center">
+          <div>
+            <h1 class="text-2xl font-bold tracking-tight">Team Task Dashboard</h1>
+            <p class="text-slate-500 text-xs mt-1">Organize operational tasks and coordinate comment feedback</p>
+          </div>
+          <button onclick="openTaskModal()" class="bg-brand-blue hover:brightness-110 text-white font-bold text-xs px-4 py-2 rounded-lg flex items-center gap-2 cursor-pointer">
+            <span class="material-symbols-outlined text-[16px]">add</span>
+            <span>Create Task</span>
+          </button>
+        </div>
+
+        <!-- Kanban Columns -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 items-start" id="tasks-pipeline-grid">
+          <!-- Task Columns Rendered Dynamically -->
+        </div>
+      </div>
+
+      <!-- ==================== AI ASSISTANT VIEW ==================== -->
+      <div id="tab-AI-Assistant" class="space-y-6 tab-view hidden">
+        <!-- AI Banner header -->
+        <div class="p-6 rounded-2xl bg-gradient-to-r from-brand-blue to-indigo-700 text-white flex justify-between items-center shadow-lg">
+          <div class="space-y-2">
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-[22px] text-yellow-300 animate-spin">auto_awesome</span>
+              <h1 class="text-xl font-bold">Adlantic AI Sales Assistant</h1>
+            </div>
+            <p class="text-xs text-blue-100 max-w-xl">
+              Utilize machine learning models to score your leads pipeline value, compose outreach emails, or query co-pilot stats.
+            </p>
+          </div>
+          <span class="material-symbols-outlined text-[64px] opacity-20 hidden md:block">smart_toy</span>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <!-- Analyzer Panel -->
+          <div class="p-6 rounded-2xl border border-slate-200 dark:border-slate-850 bg-white dark:bg-slate-900/40 shadow-sm lg:col-span-2 flex flex-col gap-6">
+            <div>
+              <h3 class="font-bold text-sm">Lead Score Analyzer</h3>
+              <p class="text-[11px] text-slate-500">Pick a lead profile to calculate conversion win probability</p>
+            </div>
+
+            <!-- Dropdown Selector -->
+            <div class="flex flex-col gap-2">
+              <label class="text-xs font-semibold text-slate-500">Target Lead Profile:</label>
+              <select id="ai-lead-selector" onchange="performAIAnalysis()" class="text-xs font-semibold px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-slate-50 dark:bg-slate-950 focus:outline-none focus:border-brand-blue cursor-pointer">
+                <!-- Populated dynamically -->
+              </select>
+            </div>
+
+            <!-- Interactive Gauge Audit -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-center border-t border-slate-100 dark:border-slate-800 pt-6" id="ai-score-container">
+              <!-- Rendered Dynamically -->
+            </div>
+
+            <!-- outreach tone composer -->
+            <div class="border-t border-slate-100 dark:border-slate-800 pt-6 space-y-4">
+              <div class="flex justify-between items-center">
+                <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Outreach Email Generator</h4>
+                <div class="flex gap-2" id="tone-selectors">
+                  <button onclick="setEmailTone('Professional')" id="tone-Professional" class="text-[10px] font-bold px-2.5 py-1.5 rounded transition-all bg-brand-blue text-white cursor-pointer">Professional</button>
+                  <button onclick="setEmailTone('Friendly')" id="tone-Friendly" class="text-[10px] font-bold px-2.5 py-1.5 rounded transition-all bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 cursor-pointer">Friendly</button>
+                  <button onclick="setEmailTone('Urgent')" id="tone-Urgent" class="text-[10px] font-bold px-2.5 py-1.5 rounded transition-all bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 cursor-pointer">Urgent</button>
+                </div>
+              </div>
+
+              <div class="relative">
+                <textarea id="ai-email-textarea" readonly rows="8" class="w-full text-xs font-mono p-4 border border-slate-200 dark:border-slate-800 rounded-xl bg-slate-50 dark:bg-slate-950 focus:outline-none resize-none leading-relaxed text-slate-700 dark:text-slate-300"></textarea>
+                <button onclick="copyOutreachTemplate()" class="absolute bottom-4 right-4 bg-slate-800 hover:bg-slate-700 text-white text-[10px] font-bold py-1.5 px-3 rounded-lg shadow-sm cursor-pointer">Copy Draft</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Chat Assistant -->
+          <div class="p-6 rounded-2xl border border-slate-200 dark:border-slate-850 bg-white dark:bg-slate-900/40 shadow-sm flex flex-col justify-between h-[65vh]">
+            <div class="pb-3 border-b border-slate-100 dark:border-slate-800">
+              <h3 class="font-bold text-sm">Ask sales assistant</h3>
+              <p class="text-[10px] text-slate-500">Query statistics, top deals, or win probabilities</p>
+            </div>
+
+            <!-- Message log -->
+            <div id="ai-chat-history" class="flex-grow overflow-y-auto py-4 space-y-3 pr-1 text-xs">
+              <!-- Chat Rendered Dynamically -->
+            </div>
+
+            <!-- Chat input form -->
+            <div class="flex gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">
+              <input type="text" id="ai-chat-input" onkeypress="handleAIChatKeyPress(event)" placeholder="Ask about largest deals or leads status..." class="flex-grow text-xs px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-slate-50 dark:bg-slate-950 focus:outline-none focus:border-brand-blue"/>
+              <button onclick="sendAIChatMessage()" class="bg-brand-blue hover:brightness-110 text-white rounded-lg p-2 flex items-center justify-center shrink-0 cursor-pointer">
+                <span class="material-symbols-outlined text-[18px]">send</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== TEAM & REPORTS VIEW ==================== -->
+      <div id="tab-Team" class="space-y-6 tab-view hidden">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+          <!-- Team directory list -->
+          <div class="p-6 rounded-2xl border border-slate-200 dark:border-slate-850 bg-white dark:bg-slate-900/40 shadow-sm lg:col-span-2">
+            <div class="mb-6">
+              <h3 class="font-bold text-sm">Sales Agent Directory</h3>
+              <p class="text-[10px] text-slate-500">Pipeline totals and deal assignments</p>
+            </div>
+
+            <div id="team-members-list" class="space-y-4">
+              <!-- Rendered Dynamically -->
+            </div>
+          </div>
+
+          <!-- Segment split card -->
+          <div class="p-6 rounded-2xl border border-slate-200 dark:border-slate-850 bg-white dark:bg-slate-900/40 shadow-sm">
+            <div class="mb-6">
+              <h3 class="font-bold text-sm">Pipeline Distribution</h3>
+              <p class="text-[10px] text-slate-500">Split details of active deals</p>
+            </div>
+
+            <div class="space-y-4">
+              <div>
+                <div class="flex justify-between items-center text-xs font-bold mb-1">
+                  <span>Qualified</span>
+                  <span id="dist-Qualified-text">15%</span>
+                </div>
+                <div class="w-full bg-slate-200 dark:bg-slate-800 h-2 rounded-full">
+                  <div id="dist-Qualified-bar" class="h-2 rounded-full bg-brand-accent" style="width: 15%"></div>
+                </div>
+              </div>
+              
+              <div>
+                <div class="flex justify-between items-center text-xs font-bold mb-1">
+                  <span>Proposal</span>
+                  <span id="dist-Proposal-text">40%</span>
+                </div>
+                <div class="w-full bg-slate-200 dark:bg-slate-800 h-2 rounded-full">
+                  <div id="dist-Proposal-bar" class="h-2 rounded-full bg-indigo-500" style="width: 40%"></div>
+                </div>
+              </div>
+
+              <div>
+                <div class="flex justify-between items-center text-xs font-bold mb-1">
+                  <span>Negotiation</span>
+                  <span id="dist-Negotiation-text">25%</span>
+                </div>
+                <div class="w-full bg-slate-200 dark:bg-slate-800 h-2 rounded-full">
+                  <div id="dist-Negotiation-bar" class="h-2 rounded-full bg-amber-500" style="width: 25%"></div>
+                </div>
+              </div>
+
+              <div>
+                <div class="flex justify-between items-center text-xs font-bold mb-1">
+                  <span>Closing</span>
+                  <span id="dist-Closing-text">20%</span>
+                </div>
+                <div class="w-full bg-slate-200 dark:bg-slate-800 h-2 rounded-full">
+                  <div id="dist-Closing-bar" class="h-2 rounded-full bg-brand-emerald" style="width: 20%"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== SETTINGS VIEW ==================== -->
+      <div id="tab-Settings" class="space-y-6 tab-view hidden">
+        <!-- Settings Details -->
+        <div class="p-6 rounded-2xl border border-slate-200 dark:border-slate-850 bg-white dark:bg-slate-900/40 shadow-sm max-w-2xl">
+          <h3 class="font-bold text-sm mb-4">Workspace Settings</h3>
+          <form onsubmit="handleSaveSettings(event)" class="space-y-4 text-xs font-semibold">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="space-y-1.5">
+                <label class="text-slate-500">Company Name:</label>
+                <input type="text" id="settings-name" class="w-full text-sm px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-slate-50 dark:bg-slate-950 focus:outline-none focus:border-brand-blue"/>
+              </div>
+              <div class="space-y-1.5">
+                <label class="text-slate-500">Contact Email:</label>
+                <input type="email" id="settings-email" class="w-full text-sm px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-slate-50 dark:bg-slate-950 focus:outline-none focus:border-brand-blue"/>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div class="space-y-1.5">
+                <label class="text-slate-500">Currency Unit:</label>
+                <input type="text" id="settings-currency" class="w-full text-sm px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-slate-50 dark:bg-slate-950 focus:outline-none focus:border-brand-blue"/>
+              </div>
+              <div class="space-y-1.5">
+                <label class="text-slate-500">Standard Tax Rate (%):</label>
+                <input type="number" id="settings-tax" class="w-full text-sm px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-slate-50 dark:bg-slate-950 focus:outline-none focus:border-brand-blue"/>
+              </div>
+            </div>
+
+            <button type="submit" class="bg-brand-blue hover:brightness-110 text-white font-bold text-xs px-4 py-2.5 rounded-lg shadow-sm cursor-pointer">
+              Save Configuration
+            </button>
+          </form>
+        </div>
+
+        <!-- User Access & Accounts Card -->
+        <div class="p-6 rounded-2xl border border-slate-200 dark:border-slate-850 bg-white dark:bg-slate-900/40 shadow-sm max-w-2xl">
+          <h3 class="font-bold text-sm mb-2 text-slate-800 dark:text-slate-200">User Access & Accounts</h3>
+          <p class="text-[11px] text-slate-500 mb-4">Manage login credentials and system access roles for team members.</p>
+          
+          <!-- Users List Table -->
+          <div class="overflow-hidden border border-slate-100 dark:border-slate-800 rounded-xl mb-6">
+            <table class="w-full text-left border-collapse text-xs">
+              <thead>
+                <tr class="bg-slate-50 dark:bg-slate-950/30 border-b border-slate-100 dark:border-slate-800 text-slate-500 font-bold">
+                  <th class="p-3">Name</th>
+                  <th class="p-3">Username</th>
+                  <th class="p-3">Role</th>
+                  <th class="p-3 text-right">Action</th>
+                </tr>
+              </thead>
+              <tbody id="settings-users-list">
+                <!-- Rendered dynamically -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Create User Form -->
+          <form onsubmit="handleCreateUserAccount(event)" class="space-y-4 border-t border-slate-100 dark:border-slate-800 pt-4 text-xs font-semibold">
+            <h4 class="font-bold text-[11px] text-slate-700 dark:text-slate-350">Add Member Account</h4>
+            <div class="grid grid-cols-2 gap-4">
+              <div class="space-y-1.5">
+                <label class="text-slate-500">Full Name *</label>
+                <input required type="text" id="newuser-name" placeholder="e.g. Shivansh" class="w-full text-sm px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-slate-50 dark:bg-slate-950 focus:outline-none focus:border-brand-blue text-slate-800 dark:text-slate-200"/>
+              </div>
+              <div class="space-y-1.5">
+                <label class="text-slate-500">Role *</label>
+                <input required type="text" id="newuser-role" placeholder="e.g. Administrator" class="w-full text-sm px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-slate-50 dark:bg-slate-950 focus:outline-none focus:border-brand-blue text-slate-800 dark:text-slate-200"/>
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+              <div class="space-y-1.5">
+                <label class="text-slate-500">Login Username *</label>
+                <input required type="text" id="newuser-username" placeholder="e.g. shivansh" class="w-full text-sm px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-slate-50 dark:bg-slate-950 focus:outline-none focus:border-brand-blue text-slate-800 dark:text-slate-200"/>
+              </div>
+              <div class="space-y-1.5">
+                <label class="text-slate-500">Password *</label>
+                <input required type="password" id="newuser-password" placeholder="••••••••" class="w-full text-sm px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-slate-50 dark:bg-slate-950 focus:outline-none focus:border-brand-blue text-slate-800 dark:text-slate-200"/>
+              </div>
+            </div>
+            <button type="submit" class="bg-brand-blue hover:brightness-110 text-white font-bold text-[11px] px-4 py-2 rounded-lg shadow-sm cursor-pointer">
+              Create User Account
+            </button>
+          </form>
+        </div>
+
+        <!-- Reset Button Tools -->
+        <div class="p-6 rounded-2xl border border-slate-200 dark:border-slate-850 bg-white dark:bg-slate-900/40 shadow-sm max-w-2xl">
+          <h3 class="font-bold text-sm mb-2 text-red-500">System Overwrites</h3>
+          <p class="text-[11px] text-slate-500 mb-4">Restore default mock data arrays and purge custom settings</p>
+          <button onclick="resetSystemData()" class="bg-red-600 hover:bg-red-700 text-white font-bold text-xs px-4 py-2.5 rounded-lg shadow-sm cursor-pointer">
+            Reset to Default Seed Data
+          </button>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- ==================== MODAL 1: NEW LEAD MODAL ==================== -->
+  <div id="modal-Lead" class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm flex justify-center items-center p-4 hidden">
+    <div class="w-full max-w-lg rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 flex flex-col gap-4 relative animate-scale-up">
+      <button onclick="closeLeadModal()" class="absolute top-4 right-4 p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full text-slate-500 cursor-pointer">
+        <span class="material-symbols-outlined text-[18px]">close</span>
+      </button>
+
+      <div>
+        <h3 class="text-lg font-bold tracking-tight">Create Lead Profile</h3>
+        <p class="text-xs text-slate-500 mt-0.5">Input target contact information details</p>
+      </div>
+
+      <form onsubmit="submitNewLead(event)" class="space-y-4 text-xs font-semibold">
+        <div class="grid grid-cols-2 gap-4">
+          <div class="space-y-1.5">
+            <label class="text-slate-500">Contact Full Name *</label>
+            <input required type="text" id="lead-name" placeholder="e.g. Sarah Jenkins" class="w-full text-sm px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-slate-50 dark:bg-slate-950 focus:outline-none focus:border-brand-blue"/>
+          </div>
+          <div class="space-y-1.5">
+            <label class="text-slate-500">Company Name *</label>
+            <input required type="text" id="lead-company" placeholder="e.g. Techron Systems" class="w-full text-sm px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-slate-50 dark:bg-slate-950 focus:outline-none focus:border-brand-blue"/>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div class="space-y-1.5">
+            <label class="text-slate-500">Email Address</label>
+            <input type="email" id="lead-email" placeholder="e.g. s.jenkins@techron.com" class="w-full text-sm px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-slate-50 dark:bg-slate-950 focus:outline-none focus:border-brand-blue"/>
+          </div>
+          <div class="space-y-1.5">
+            <label class="text-slate-500">Phone Number</label>
+            <input type="tel" id="lead-phone" placeholder="e.g. +1 202-555-0143" class="w-full text-sm px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-slate-50 dark:bg-slate-950 focus:outline-none focus:border-brand-blue"/>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div class="space-y-1.5">
+            <label class="text-slate-500">Potential Deal Size ($)</label>
+            <input type="number" id="lead-value" placeholder="e.g. 45000" class="w-full text-sm px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-slate-50 dark:bg-slate-950 focus:outline-none focus:border-brand-blue"/>
+          </div>
+          <div class="space-y-1.5">
+            <label class="text-slate-500">Status</label>
+            <select id="lead-status" class="w-full text-sm px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-slate-50 dark:bg-slate-950 focus:outline-none focus:border-brand-blue cursor-pointer">
+              <option>New</option>
+              <option>Contacted</option>
+              <option>Qualified</option>
+              <option>Nurturing</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div class="space-y-1.5">
+            <label class="text-slate-500">Priority</label>
+            <select id="lead-priority" class="w-full text-sm px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-slate-50 dark:bg-slate-950 focus:outline-none focus:border-brand-blue cursor-pointer">
+              <option>Low</option>
+              <option>Medium</option>
+              <option>High</option>
+              <option>Urgent</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="space-y-1.5">
+          <label class="text-slate-500">Internal Audit Notes</label>
+          <textarea placeholder="Insert extra contact context or call logs..." id="lead-notes" rows="2" class="w-full text-sm px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-slate-50 dark:bg-slate-950 focus:outline-none focus:border-brand-blue resize-none"></textarea>
+        </div>
+
+        <button type="submit" class="w-full bg-brand-blue hover:brightness-110 text-white font-bold text-sm py-2.5 rounded-lg shadow shadow-brand-blue/10 active:scale-95 transition-all cursor-pointer">
+          Publish Lead Profile
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL 1.5: LEAD DETAILS MODAL ==================== -->
+  <div id="modal-Lead-Details" class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm flex justify-center items-center p-4 hidden">
+    <div class="w-full max-w-lg rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 flex flex-col gap-5 relative animate-scale-up">
+      <button onclick="closeLeadDetails()" class="absolute top-4 right-4 p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full text-slate-500 hover:scale-110 active:scale-95 transition-all cursor-pointer">
+        <span class="material-symbols-outlined text-[18px]">close</span>
+      </button>
+
+      <div class="flex items-center gap-3 border-b border-slate-100 dark:border-slate-800 pb-3">
+        <div id="det-avatar" class="w-12 h-12 rounded-full bg-brand-blue text-white flex items-center justify-center font-bold text-base shadow shadow-brand-blue/30">
+          SJ
+        </div>
+        <div>
+          <h3 id="det-name" class="text-xl font-bold tracking-tight text-slate-800 dark:text-white">Sarah Jenkins</h3>
+          <p id="det-company" class="text-xs text-brand-accent font-semibold">Techron Systems</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4 text-xs">
+        <div class="space-y-1">
+          <span class="text-slate-400 font-medium block">Email Address</span>
+          <span id="det-email" class="font-bold text-slate-800 dark:text-slate-200 break-all text-xs">s.jenkins@techron.com</span>
+        </div>
+        <div class="space-y-1">
+          <span class="text-slate-400 font-medium block">Phone Number</span>
+          <span id="det-phone" class="font-bold text-slate-800 dark:text-slate-200 text-xs">+1 202-555-0143</span>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-3 gap-4 text-xs border-t border-b border-slate-100 dark:border-slate-800 py-3.5">
+        <div class="space-y-1">
+          <span class="text-slate-400 font-medium block">Potential Value</span>
+          <span id="det-value" class="font-extrabold text-slate-800 dark:text-slate-200 text-sm">$45,000</span>
+        </div>
+        <div class="space-y-1">
+          <span class="text-slate-400 font-medium block">Status</span>
+          <span id="det-status" class="inline-block px-2.5 py-0.5 rounded-full font-extrabold uppercase tracking-wider text-[9px]">New</span>
+        </div>
+        <div class="space-y-1">
+          <span class="text-slate-400 font-medium block">Priority</span>
+          <span id="det-priority" class="inline-block px-2.5 py-0.5 rounded-full font-extrabold uppercase tracking-wider text-[9px]">High</span>
+        </div>
+      </div>
+
+      <div class="space-y-1 text-xs">
+        <span class="text-slate-400 font-medium block">Internal Audit Notes</span>
+        <div id="det-notes" class="p-3 rounded-lg border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/20 text-slate-700 dark:text-slate-350 italic leading-relaxed min-h-[50px]">
+          Met at conference. Prefers email updates.
+        </div>
+      </div>
+
+      <!-- Dynamic AI Insight Area inside Details -->
+      <div class="p-4 rounded-xl bg-gradient-to-r from-blue-600/10 to-indigo-600/10 border border-blue-500/20 text-xs">
+        <div class="flex items-center gap-1.5 text-blue-500 dark:text-blue-400 font-bold mb-1.5">
+          <span class="material-symbols-outlined text-[14px]">auto_awesome</span>
+          <span>Adlantic AI Win Probability Estimate</span>
+        </div>
+        <div class="flex items-baseline gap-2">
+          <span id="det-ai-score" class="text-2xl font-black text-blue-500">65%</span>
+          <span class="text-[10px] text-slate-400 font-semibold uppercase">Win likelihood based on profile criteria</span>
+        </div>
+      </div>
+
+      <div class="flex justify-end pt-2 border-t border-slate-100 dark:border-slate-800">
+        <button onclick="closeLeadDetails()" class="bg-brand-blue hover:brightness-110 text-white font-bold text-xs px-4 py-2.5 rounded-lg shadow active:scale-95 hover:scale-[1.02] transition-all cursor-pointer">
+          Dismiss Details
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL 2: NEW DEAL MODAL ==================== -->
+  <div id="modal-Deal" class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm flex justify-center items-center p-4 hidden">
+    <div class="w-full max-w-lg rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 flex flex-col gap-4 relative animate-scale-up">
+      <button onclick="closeDealModal()" class="absolute top-4 right-4 p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full text-slate-500 cursor-pointer">
+        <span class="material-symbols-outlined text-[18px]">close</span>
+      </button>
+
+      <div>
+        <h3 class="text-lg font-bold tracking-tight">Create Sales Deal</h3>
+        <p class="text-xs text-slate-500 mt-0.5">Define target proposal pipeline logs</p>
+      </div>
+
+      <form onsubmit="submitNewDeal(event)" class="space-y-4 text-xs font-semibold">
+        <div class="space-y-1.5">
+          <label class="text-slate-500">Deal Title *</label>
+          <input required type="text" id="deal-title" placeholder="e.g. Cloud Infrastructure Upgrade" class="w-full text-sm px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-slate-50 dark:bg-slate-950 focus:outline-none focus:border-brand-blue"/>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div class="space-y-1.5">
+            <label class="text-slate-500">Company Name *</label>
+            <input required type="text" id="deal-company" placeholder="e.g. Techron Systems" class="w-full text-sm px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-slate-50 dark:bg-slate-950 focus:outline-none focus:border-brand-blue"/>
+          </div>
+          <div class="space-y-1.5">
+            <label class="text-slate-500">Deal Value ($) *</label>
+            <input required type="number" id="deal-value" placeholder="e.g. 185000" class="w-full text-sm px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-slate-50 dark:bg-slate-950 focus:outline-none focus:border-brand-blue"/>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div class="space-y-1.5">
+            <label class="text-slate-500">Pipeline Stage</label>
+            <select id="deal-stage" class="w-full text-sm px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-slate-50 dark:bg-slate-950 focus:outline-none focus:border-brand-blue cursor-pointer">
+              <option>Qualified</option>
+              <option>Proposal</option>
+              <option>Negotiation</option>
+              <option>Closing</option>
+            </select>
+          </div>
+          <div class="space-y-1.5">
+            <label class="text-slate-500">Priority</label>
+            <select id="deal-priority" class="w-full text-sm px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-slate-50 dark:bg-slate-950 focus:outline-none focus:border-brand-blue cursor-pointer">
+              <option>Low</option>
+              <option>Medium</option>
+              <option>High</option>
+              <option>Urgent</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="space-y-1.5">
+          <label class="text-slate-500">Assign Reps (Comma separated initials)</label>
+          <input type="text" id="deal-assignees" placeholder="e.g. JD, AL" class="w-full text-sm px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-slate-50 dark:bg-slate-950 focus:outline-none focus:border-brand-blue"/>
+        </div>
+
+        <button type="submit" class="w-full bg-brand-blue hover:brightness-110 text-white font-bold text-sm py-2.5 rounded-lg shadow shadow-brand-blue/10 active:scale-95 transition-all cursor-pointer">
+          Log Sales Proposal
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL 3: NEW TASK MODAL ==================== -->
+  <div id="modal-Task" class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm flex justify-center items-center p-4 hidden">
+    <div class="w-full max-w-lg rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 flex flex-col gap-4 relative animate-scale-up">
+      <button onclick="closeTaskModal()" class="absolute top-4 right-4 p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full text-slate-500 cursor-pointer">
+        <span class="material-symbols-outlined text-[18px]">close</span>
+      </button>
+
+      <div>
+        <h3 class="text-lg font-bold tracking-tight">Assign Task Log</h3>
+        <p class="text-xs text-slate-500 mt-0.5">Assign visual checklist logs to team members</p>
+      </div>
+
+      <form onsubmit="submitNewTask(event)" class="space-y-4 text-xs font-semibold">
+        <div class="space-y-1.5">
+          <label class="text-slate-500">Task Title *</label>
+          <input required type="text" id="task-title" placeholder="e.g. Call Sarah Jenkins" class="w-full text-sm px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-slate-50 dark:bg-slate-950 focus:outline-none focus:border-brand-blue"/>
+        </div>
+
+        <div class="space-y-1.5">
+          <label class="text-slate-500">Description</label>
+          <textarea id="task-description" placeholder="State the outcomes of this task..." rows="2" class="w-full text-sm px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-slate-50 dark:bg-slate-950 focus:outline-none focus:border-brand-blue resize-none"></textarea>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div class="space-y-1.5">
+            <label class="text-slate-500">Due Date</label>
+            <input type="date" id="task-duedate" class="w-full text-sm px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-slate-50 dark:bg-slate-950 focus:outline-none focus:border-brand-blue"/>
+          </div>
+          <div class="space-y-1.5">
+            <label class="text-slate-500">Priority</label>
+            <select id="task-priority" class="w-full text-sm px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-slate-50 dark:bg-slate-950 focus:outline-none focus:border-brand-blue cursor-pointer">
+              <option>Low</option>
+              <option>Medium</option>
+              <option>High</option>
+              <option>Urgent</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div class="space-y-1.5">
+            <label class="text-slate-500">Assignee</label>
+            <select id="task-assignee" class="w-full text-sm px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-slate-50 dark:bg-slate-950 focus:outline-none focus:border-brand-blue cursor-pointer">
+              <option>John Doe</option>
+              <option>Shivansh</option>
+              <option>Sarah Jenkins</option>
+            </select>
+          </div>
+          <div class="space-y-1.5">
+            <label class="text-slate-500">Initial Status</label>
+            <select id="task-status" class="w-full text-sm px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-slate-50 dark:bg-slate-950 focus:outline-none focus:border-brand-blue cursor-pointer">
+              <option>TODO</option>
+              <option>IN_PROGRESS</option>
+              <option>IN_REVIEW</option>
+            </select>
+          </div>
+        </div>
+
+        <button type="submit" class="w-full bg-brand-blue hover:brightness-110 text-white font-bold text-sm py-2.5 rounded-lg shadow shadow-brand-blue/10 active:scale-95 transition-all cursor-pointer">
+          Log Assignment Task
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL 4: USER PROFILE MODAL ==================== -->
+  <div id="modal-Profile" class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm flex justify-center items-center p-4 hidden">
+    <div class="w-full max-w-md rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 flex flex-col gap-4 relative animate-scale-up">
+      <button onclick="closeProfileModal()" class="absolute top-4 right-4 p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full text-slate-500 cursor-pointer">
+        <span class="material-symbols-outlined text-[18px]">close</span>
+      </button>
+
+      <div>
+        <h3 class="text-lg font-bold tracking-tight">Edit User Profile</h3>
+        <p class="text-xs text-slate-500 mt-0.5">Customize your personal account details</p>
+      </div>
+
+      <form onsubmit="submitUserProfile(event)" class="space-y-4 text-xs font-semibold">
+        <div class="space-y-1.5">
+          <label class="text-slate-500">Full Name *</label>
+          <input required type="text" id="profile-name" class="w-full text-sm px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-slate-50 dark:bg-slate-950 focus:outline-none focus:border-brand-blue"/>
+        </div>
+
+        <div class="space-y-1.5">
+          <label class="text-slate-500">Role / Designation *</label>
+          <input required type="text" id="profile-role" class="w-full text-sm px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-slate-50 dark:bg-slate-950 focus:outline-none focus:border-brand-blue"/>
+        </div>
+
+        <div class="space-y-1.5">
+          <label class="text-slate-500">Avatar Color Theme</label>
+          <select id="profile-avatar-color" class="w-full text-sm px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-slate-50 dark:bg-slate-950 focus:outline-none focus:border-brand-blue cursor-pointer">
+            <option value="bg-brand-blue">Action Blue</option>
+            <option value="bg-purple-650 bg-purple-600">Royal Purple</option>
+            <option value="bg-emerald-600">Emerald Green</option>
+            <option value="bg-pink-600">Rose Pink</option>
+            <option value="bg-amber-600">Amber Yellow</option>
+          </select>
+        </div>
+
+        <button type="submit" class="w-full bg-brand-blue hover:brightness-110 text-white font-bold text-sm py-2.5 rounded-lg shadow shadow-brand-blue/10 active:scale-95 transition-all cursor-pointer">
+          Update Profile Details
+        </button>
+      </form>
+
+      <div class="border-t border-slate-200 dark:border-slate-800 pt-4 mt-2 flex justify-between items-center text-xs">
+        <span class="text-slate-400">Close session</span>
+        <button onclick="handleLogout()" type="button" class="bg-red-500/10 hover:bg-red-500/20 text-red-500 font-bold text-[10px] px-3 py-1.5 rounded-lg transition-all cursor-pointer">
+          Logout Session
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== REACTIVE SCRIPTS ==================== -->
+  <script>
+    // --- Initial Seeds ---
+    const SEED_LEADS = [
+      { id: "l1", name: "Sarah Jenkins", email: "s.jenkins@techron.com", phone: "+1 202-555-0143", company: "Techron Systems", status: "New", value: 45000, lastActivity: "2 hours ago", priority: "High", notes: "Met at conference. Prefers email updates." },
+      { id: "l2", name: "Marcus Holloway", email: "marcus@Adlantic-inc.io", phone: "+1 415-555-2671", company: "Adlantic Industries", status: "Contacted", value: 120000, lastActivity: "Yesterday", priority: "Medium", notes: "Scheduling Q3 review call next Monday." },
+      { id: "l3", name: "Elena Rodriguez", email: "elena.r@global-logistics.com", phone: "+34 91 555 1234", company: "Global Logistics", status: "Qualified", value: 32500, lastActivity: "3 days ago", priority: "Low", notes: "Interested in logistics suite." },
+      { id: "l4", name: "Diane Chambers", email: "diane@boston-ads.com", phone: "+1 617-555-0199", company: "Boston Advertising", status: "New", value: 8900, lastActivity: "4 hours ago", priority: "Low", notes: "Looking for small agency SEO pilot." },
+      { id: "l5", name: "Tobias Fünke", email: "tobias@bluth-co.com", phone: "+1 949-555-0182", company: "Bluth Company", status: "Nurturing", value: 240000, lastActivity: "1 week ago", priority: "High", notes: "Slow decision makers. Keep sending reports." },
+      { id: "l6", name: "Alicia Masters", email: "a.masters@futurecorp.com", phone: "+1 212-555-0177", company: "FutureCorp", status: "Qualified", value: 15200, lastActivity: "2 hours ago", priority: "Medium", notes: "Emailed pricing plans." },
+      { id: "l7", name: "Sam Porter", email: "sam@delivery-grid.com", phone: "+1 310-555-0155", company: "Delivery Grid", status: "Contacted", value: 56000, lastActivity: "5 mins ago", priority: "Urgent", notes: "Urgent contract renewal request." }
+    ];
+
+    const SEED_DEALS = [
+      { id: "d1", title: "Cloud Infrastructure Upgrade", company: "Techron Systems", value: 185000, stage: "Proposal", dueDate: "2026-10-24", priority: "High", assignees: ["JD", "AL"] },
+      { id: "d2", title: "SaaS Enterprise License", company: "Global Logistics", value: 42000, stage: "Proposal", dueDate: "2026-11-02", priority: "Medium", assignees: ["AL"] },
+      { id: "d3", title: "Security Audit & Compliance", company: "Fintech Solutions Inc", value: 75000, stage: "Negotiation", dueDate: "2026-12-15", priority: "Low", assignees: ["JD"] },
+      { id: "d4", title: "Custom API Integration", company: "RetailHub Co.", value: 12500, stage: "Qualified", dueDate: "2026-10-30", priority: "Low", assignees: ["SJ"] },
+      { id: "d5", title: "E-Commerce Platform Build", company: "Boston Advertising", value: 98000, stage: "Closing", dueDate: "2026-08-20", priority: "High", assignees: ["AL", "SJ"] },
+      { id: "d6", title: "Data Analytics Suite", company: "Adlantic Industries", value: 145000, stage: "Closed Won", dueDate: "2026-06-15", priority: "Urgent", assignees: ["JD", "AL"] }
+    ];
+
+    const SEED_TASKS = [
+      { id: "t1", title: "Call Sarah Jenkins", description: "Follow up on Q3 proposal sent last week. Address security concerns.", status: "TODO", dueDate: "2026-06-27", priority: "High", assignee: "John Doe", comments: [{ id: "c1", author: "John Doe", content: "She was out of office on Monday.", date: "2026-06-25 14:00" }] },
+      { id: "t2", title: "Prepare Proposal for Adlantic", description: "Draft the custom SLA and data residency requirements details.", status: "IN_PROGRESS", dueDate: "2026-06-28", priority: "Urgent", assignee: "Alex Lopez", comments: [] },
+      { id: "t3", title: "Review Techron architecture", description: "Inspect local compliance with IT rules.", status: "IN_REVIEW", dueDate: "2026-06-29", priority: "Medium", assignee: "Sarah Jenkins", comments: [] },
+      { id: "t4", title: "Setup Database Sandbox", description: "Deploy Docker sandbox for proof of concept.", status: "DONE", dueDate: "2026-06-24", priority: "Low", assignee: "John Doe", comments: [{ id: "c2", author: "John Doe", content: "Sandbox is ready.", date: "2026-06-24 16:30" }] }
+    ];
+
+    const SEED_TEAM = [
+      { id: "t_m1", name: "John Doe", role: "Admin Account", initials: "JD", activeDeals: 8, pipelineValue: 320000, avatarBg: "bg-blue-600" },
+      { id: "t_m2", name: "Shivansh", role: "Senior Sales Rep", initials: "S", activeDeals: 12, pipelineValue: 640000, avatarBg: "bg-purple-600" },
+      { id: "t_m3", name: "Sarah Jenkins", role: "Account Executive", initials: "SJ", activeDeals: 4, pipelineValue: 288000, avatarBg: "bg-pink-600" }
+    ];
+
+    const SEED_ACTIVITIES = [
+      { id: "a1", timestamp: "10m ago", action: "Lead Logged", details: "Sarah Jenkins from Techron Systems was added.", type: "lead" },
+      { id: "a2", timestamp: "1h ago", action: "Pipeline Transition", details: "Cloud Infrastructure moved to Proposal stage.", type: "deal" },
+      { id: "a3", timestamp: "3h ago", action: "Task Completed", details: "Setup Database Sandbox was completed.", type: "task" }
+    ];
+
+    const SEED_SETTINGS = { name: "AdLantic Media", email: "contact@adlantic.com", phone: "+1 234 5678", taxRate: 18, currency: "USD" };
+    const SEED_USER_PROFILE = { name: "Shivansh", role: "Senior Account Manager", avatarBg: "bg-brand-blue", initials: "S", username: "shivansh@gmail.com" };
+    const SEED_USERS = [
+      { username: "shivansh@gmail.com", password: "password", name: "Shivansh", role: "Administrator", avatarBg: "bg-brand-blue", initials: "S" },
+      { username: "admin", password: "password", name: "Admin", role: "Administrator", avatarBg: "bg-brand-blue", initials: "A" },
+      { username: "john", password: "password", name: "John Doe", role: "Admin Account", initials: "JD", avatarBg: "bg-blue-600" },
+      { username: "sarah", password: "password", name: "Sarah Jenkins", role: "Account Executive", initials: "SJ", avatarBg: "bg-pink-600" }
+    ];
+
+    // --- State Storage ---
+    let leads, deals, tasks, team, activities, settings, userProfile, users;
+    try {
+      leads = JSON.parse(localStorage.getItem("Adlantic-leads")) || SEED_LEADS;
+    } catch (e) {
+      leads = SEED_LEADS;
+    }
+    try {
+      deals = JSON.parse(localStorage.getItem("Adlantic-deals")) || SEED_DEALS;
+    } catch (e) {
+      deals = SEED_DEALS;
+    }
+    try {
+      tasks = JSON.parse(localStorage.getItem("Adlantic-tasks")) || SEED_TASKS;
+    } catch (e) {
+      tasks = SEED_TASKS;
+    }
+    try {
+      team = JSON.parse(localStorage.getItem("Adlantic-team")) || SEED_TEAM;
+    } catch (e) {
+      team = SEED_TEAM;
+    }
+    try {
+      activities = JSON.parse(localStorage.getItem("Adlantic-activities")) || SEED_ACTIVITIES;
+    } catch (e) {
+      activities = SEED_ACTIVITIES;
+    }
+    try {
+      settings = JSON.parse(localStorage.getItem("Adlantic-company-settings")) || SEED_SETTINGS;
+    } catch (e) {
+      settings = SEED_SETTINGS;
+    }
+    try {
+      userProfile = JSON.parse(localStorage.getItem("Adlantic-user-profile")) || SEED_USER_PROFILE;
+    } catch (e) {
+      userProfile = SEED_USER_PROFILE;
+    }
+    try {
+      users = JSON.parse(localStorage.getItem("Adlantic-users")) || SEED_USERS;
+    } catch (e) {
+      users = SEED_USERS;
+    }
+
+    let activeTab = "Dashboard";
+    let leadPage = 1;
+    const leadsPerPage = 6;
+    let currentAILeadId = leads[0]?.id || "";
+    let currentTone = "Professional";
+    let aiChatHistory = [
+      { sender: "bot", text: "Hello! I am your sales co-pilot. Select a lead below to analyze or ask me questions about your pipeline status!" }
+    ];
+
+    // --- Helper Sync ---
+    function saveState() {
+      localStorage.setItem("Adlantic-leads", JSON.stringify(leads));
+      localStorage.setItem("Adlantic-deals", JSON.stringify(deals));
+      localStorage.setItem("Adlantic-tasks", JSON.stringify(tasks));
+      localStorage.setItem("Adlantic-team", JSON.stringify(team));
+      localStorage.setItem("Adlantic-activities", JSON.stringify(activities));
+      localStorage.setItem("Adlantic-company-settings", JSON.stringify(settings));
+      localStorage.setItem("Adlantic-user-profile", JSON.stringify(userProfile));
+      localStorage.setItem("Adlantic-users", JSON.stringify(users));
+      renderAll();
+    }
+
+    function addActivity(action, details, type) {
+      const log = { id: "a_" + Date.now(), timestamp: "Just now", action, details, type };
+      activities.unshift(log);
+      if (activities.length > 20) activities.pop();
+      saveState();
+    }
+
+    // --- Theme Controller ---
+    function toggleTheme() {
+      const isDark = document.documentElement.classList.toggle('dark');
+      localStorage.setItem('Adlantic-theme', isDark ? 'dark' : 'light');
+      document.getElementById("theme-icon").innerText = isDark ? "light_mode" : "dark_mode";
+    }
+
+    // Set initial theme
+    if (localStorage.getItem('Adlantic-theme') === 'dark') {
+      document.documentElement.classList.add('dark');
+      document.getElementById("theme-icon").innerText = "light_mode";
+    }
+
+    // --- Tab Switcher ---
+    function switchTab(tabId) {
+      activeTab = tabId;
+      document.querySelectorAll(".tab-view").forEach(el => el.classList.add("hidden"));
+      document.getElementById(`tab-${tabId}`).classList.remove("hidden");
+
+      // Set sidebar button state
+      document.querySelectorAll("#sidebar-nav button").forEach(btn => {
+        btn.className = "w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all text-slate-400 hover:bg-slate-800 hover:text-white btn-animate";
+        // Reset custom colors
+        if(btn.id === "nav-AI-Assistant") {
+          btn.querySelector("span:last-child").className = "text-blue-400";
+          btn.querySelector("span:first-child").className = "material-symbols-outlined text-blue-400";
+        }
+      });
+
+      const activeBtn = document.getElementById(`nav-${tabId}`);
+      if (activeBtn) {
+        activeBtn.className = "w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all bg-brand-blue text-white shadow-md shadow-blue-900/30 btn-animate";
+      }
+
+      document.getElementById("header-tab-title").innerText = tabId === "AI-Assistant" ? "AI Sales Co-pilot" : tabId + " Summary";
+      renderAll();
+    }
+
+    // --- Core View Renderers ---
+
+    function renderAll() {
+      // Common headers
+      document.getElementById("company-subtitle").innerText = settings.name;
+      document.getElementById("header-workspace-name").innerText = "Workspace: " + settings.name;
+
+      // Update User Card Details
+      document.getElementById("user-name-badge").innerText = userProfile.name;
+      document.getElementById("user-role-badge").innerText = userProfile.role;
+      document.getElementById("user-avatar-badge").innerText = userProfile.initials;
+      document.getElementById("user-avatar-badge").className = `w-10 h-10 rounded-full flex items-center justify-center font-bold text-white text-sm ${userProfile.avatarBg}`;
+
+      // Tab specific execution
+      if (activeTab === "Dashboard") renderDashboard();
+      else if (activeTab === "Leads") renderLeads();
+      else if (activeTab === "Pipeline") renderPipeline();
+      else if (activeTab === "Tasks") renderTasks();
+      else if (activeTab === "AI-Assistant") renderAIAssistant();
+      else if (activeTab === "Team") renderTeam();
+      else if (activeTab === "Settings") renderSettings();
+    }
+
+    // --- View 1: Dashboard ---
+    function renderDashboard() {
+      const firstName = userProfile.name.split(" ")[0];
+      document.getElementById("dashboard-greeting-title").innerText = `Hello, ${firstName}`;
+
+      const activeDeals = deals.filter(d => d.stage !== "Closed Won" && d.stage !== "Closed Lost");
+      const pipelineSum = activeDeals.reduce((sum, d) => sum + d.value, 0);
+      const wonDeals = deals.filter(d => d.stage === "Closed Won");
+      const lostDeals = deals.filter(d => d.stage === "Closed Lost");
+      const winRate = Math.round((wonDeals.length / ((wonDeals.length + lostDeals.length) || 1)) * 100);
+      const revenue = wonDeals.reduce((sum, d) => sum + d.value, 0);
+
+      document.getElementById("kpi-revenue").innerText = `$${(revenue / 1000).toFixed(0)}k`;
+      document.getElementById("kpi-deals").innerText = activeDeals.length;
+      document.getElementById("kpi-winrate").innerText = `${winRate}%`;
+      document.getElementById("kpi-pipeline").innerText = `$${(pipelineSum / 1000000).toFixed(1)}M`;
+
+      // Render Dashboard Activities List
+      const actContainer = document.getElementById("dashboard-activity-list");
+      actContainer.innerHTML = "";
+      activities.slice(0, 5).forEach(act => {
+        actContainer.innerHTML += `
+          <div class="flex gap-3 text-[11px] leading-relaxed">
+            <div class="w-1.5 h-1.5 rounded-full bg-brand-accent mt-1.5 shrink-0"></div>
+            <div class="flex-grow">
+              <p class="font-bold text-slate-800 dark:text-slate-200">${act.action}</p>
+              <p class="text-slate-500">${act.details}</p>
+            </div>
+            <span class="text-[9px] text-slate-400 font-semibold whitespace-nowrap">${act.timestamp}</span>
+          </div>
+        `;
+      });
+
+      // Render Dashboard Tasks Checklist
+      const taskContainer = document.getElementById("dashboard-task-checklist");
+      taskContainer.innerHTML = "";
+      tasks.slice(0, 3).forEach(task => {
+        const isDone = task.status === "DONE";
+        taskContainer.innerHTML += `
+          <div class="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/40 flex items-center gap-3 ${isDone ? 'opacity-50' : ''}">
+            <button onclick="toggleTaskStatus('${task.id}')" class="w-5 h-5 rounded border border-slate-300 dark:border-slate-700 flex items-center justify-center bg-white dark:bg-slate-950 text-brand-blue cursor-pointer">
+              ${isDone ? '<span class="material-symbols-outlined text-[16px] font-bold">check</span>' : ''}
+            </button>
+            <div class="flex-grow">
+              <h4 class="text-xs font-bold ${isDone ? 'line-through text-slate-400' : 'text-slate-800 dark:text-slate-200'}">${task.title}</h4>
+              <p class="text-[9px] text-slate-400 font-medium">Rep: ${task.assignee} • Due ${task.dueDate}</p>
+            </div>
+            <span class="text-[8px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${
+              task.priority === "Urgent" ? 'bg-red-500/10 text-red-500' : 'bg-slate-500/10 text-slate-400'
+            }">${task.priority}</span>
+          </div>
+        `;
+      });
+    }
+
+    function toggleTaskStatus(id) {
+      const task = tasks.find(t => t.id === id);
+      if (task) {
+        task.status = task.status === "DONE" ? "TODO" : "DONE";
+        addActivity("Task Status Flipped", `Task "${task.title}" toggled.`, "task");
+      }
+    }
+
+    // --- View 2: Leads Registry ---
+    function renderLeads() {
+      const query = document.getElementById("lead-search-input").value.toLowerCase();
+      const statusFilter = document.getElementById("lead-status-filter").value;
+
+      const filtered = leads.filter(l => {
+        const matchesQuery = l.name.toLowerCase().includes(query) || l.email.toLowerCase().includes(query) || l.company.toLowerCase().includes(query);
+        const matchesStatus = statusFilter === "All Statuses" || l.status === statusFilter;
+        return matchesQuery && matchesStatus;
+      });
+
+      document.getElementById("leads-count-text").innerText = `Filtered list: ${filtered.length} leads registered`;
+
+      const totalPages = Math.ceil(filtered.length / leadsPerPage) || 1;
+      if (leadPage > totalPages) leadPage = totalPages;
+
+      const start = (leadPage - 1) * leadsPerPage;
+      const end = start + leadsPerPage;
+      const pageLeads = filtered.slice(start, end);
+
+      const tableBody = document.getElementById("leads-table-body");
+      tableBody.innerHTML = "";
+
+      pageLeads.forEach(lead => {
+        tableBody.innerHTML += `
+          <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-900/30 transition-colors">
+            <td class="p-4">
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/30 text-brand-blue flex items-center justify-center font-bold text-xs">
+                  ${lead.name.split(" ").map(w => w[0]).join("")}
+                </div>
+                <div>
+                  <p class="font-bold text-slate-800 dark:text-slate-200">${lead.name}</p>
+                  <p class="text-xs text-slate-500">${lead.email}</p>
+                  ${lead.phone ? `<p class="text-[10px] text-slate-400 font-semibold mt-0.5">${lead.phone}</p>` : ''}
+                </div>
+              </div>
+            </td>
+            <td class="p-4 font-semibold text-slate-600 dark:text-slate-300">${lead.company}</td>
+            <td class="p-4">
+              <select onchange="updateLeadStatusInline('${lead.id}', this.value)" class="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full cursor-pointer focus:outline-none border-none ${
+                lead.status === 'New' ? 'bg-blue-500/10 text-blue-500' :
+                lead.status === 'Contacted' ? 'bg-amber-500/10 text-amber-500' :
+                lead.status === 'Qualified' ? 'bg-emerald-500/10 text-emerald-500' :
+                lead.status === 'Nurturing' ? 'bg-purple-500/10 text-purple-500' :
+                'bg-red-500/10 text-red-500'
+              }">
+                <option ${lead.status === 'New' ? 'selected' : ''}>New</option>
+                <option ${lead.status === 'Contacted' ? 'selected' : ''}>Contacted</option>
+                <option ${lead.status === 'Qualified' ? 'selected' : ''}>Qualified</option>
+                <option ${lead.status === 'Nurturing' ? 'selected' : ''}>Nurturing</option>
+                <option ${lead.status === 'Lost' ? 'selected' : ''}>Lost</option>
+              </select>
+            </td>
+            <td class="p-4 font-bold text-slate-800 dark:text-slate-200">$${lead.value.toLocaleString()}</td>
+            <td class="p-4 text-xs text-slate-500 font-semibold">${lead.lastActivity}</td>
+            <td class="p-4">
+              <span class="text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full ${
+                lead.priority === 'Urgent' ? 'bg-red-500/10 text-red-500 border border-red-500/20' :
+                lead.priority === 'High' ? 'bg-orange-500/10 text-orange-500 border border-orange-500/20' :
+                'bg-slate-500/10 text-slate-400'
+              }">${lead.priority}</span>
+            </td>
+            <td class="p-4">
+              <div class="flex items-center justify-center gap-2">
+                <button onclick="openLeadDetails('${lead.id}')" title="View Lead Details" class="p-1 rounded text-blue-500 hover:bg-blue-500/10 hover:scale-110 active:scale-95 transition-all cursor-pointer">
+                  <span class="material-symbols-outlined text-[16px]">info</span>
+                </button>
+                <button onclick="triggerAICopilotForLead('${lead.id}')" title="AI Copilot Analyze" class="p-1 rounded text-brand-accent hover:bg-brand-accent/10 hover:scale-110 active:scale-95 transition-all cursor-pointer">
+                  <span class="material-symbols-outlined text-[16px]">auto_awesome</span>
+                </button>
+                <button onclick="deleteLead('${lead.id}')" title="Delete Lead" class="p-1 rounded text-red-500 hover:bg-red-500/10 hover:scale-110 active:scale-95 transition-all cursor-pointer">
+                  <span class="material-symbols-outlined text-[16px]">delete</span>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      });
+
+      document.getElementById("leads-pagination-info").innerText = `Showing ${Math.min(start + 1, filtered.length)}-${Math.min(end, filtered.length)} of ${filtered.length} leads`;
+      document.getElementById("leads-page-indicator").innerText = `${leadPage} / ${totalPages}`;
+      document.getElementById("btn-prev-page").disabled = leadPage === 1;
+      document.getElementById("btn-next-page").disabled = leadPage === totalPages;
+    }
+
+    function handleLeadSearch() {
+      leadPage = 1;
+      renderLeads();
+    }
+
+    function handleLeadStatusFilter() {
+      leadPage = 1;
+      renderLeads();
+    }
+
+    function changeLeadPage(dir) {
+      leadPage += dir;
+      renderLeads();
+    }
+
+    function updateLeadStatusInline(id, newStatus) {
+      const lead = leads.find(l => l.id === id);
+      if (lead) {
+        lead.status = newStatus;
+        lead.lastActivity = "Just now";
+        addActivity("Lead Status Update", `${lead.name}'s status was changed to ${newStatus}.`, "lead");
+      }
+    }
+
+    function triggerAICopilotForLead(id) {
+      currentAILeadId = id;
+      switchTab("AI-Assistant");
+    }
+
+    function deleteLead(id) {
+      const lead = leads.find(l => l.id === id);
+      if (lead && confirm(`Delete lead profile for ${lead.name}?`)) {
+        leads = leads.filter(l => l.id !== id);
+        addActivity("Lead Removed", `${lead.name} was removed from registries.`, "lead");
+      }
+    }
+
+    // --- View 3: Deals Pipeline ---
+    function renderPipeline() {
+      const grid = document.getElementById("deals-pipeline-grid");
+      grid.innerHTML = "";
+
+      const stages = ["Qualified", "Proposal", "Negotiation", "Closing"];
+      stages.forEach(stage => {
+        const stageDeals = deals.filter(d => d.stage === stage);
+        const totalSum = stageDeals.reduce((sum, d) => sum + d.value, 0);
+
+        let cardsHtml = "";
+        stageDeals.forEach(deal => {
+          cardsHtml += `
+            <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm flex flex-col justify-between hover:border-brand-blue dark:hover:border-brand-blue transition-all">
+              <div class="flex justify-between items-start mb-2 gap-1.5">
+                <h4 class="text-xs font-bold tracking-tight line-clamp-2">${deal.title}</h4>
+                <span class="text-[8px] font-extrabold uppercase px-1.5 py-0.5 rounded shrink-0 ${
+                  deal.priority === 'Urgent' ? 'bg-red-500/10 text-red-500' :
+                  deal.priority === 'High' ? 'bg-orange-500/10 text-orange-500' :
+                  'bg-brand-blue/10 text-brand-accent'
+                }">${deal.priority}</span>
+              </div>
+              <p class="text-[9px] text-slate-500 font-medium mb-3">${deal.company}</p>
+
+              <div class="flex justify-between items-center mt-4 pt-2 border-t border-slate-100 dark:border-slate-800">
+                <span class="text-xs font-extrabold text-slate-900 dark:text-white">$${deal.value.toLocaleString()}</span>
+                
+                <div class="flex items-center gap-1 text-slate-400">
+                  ${stage !== 'Qualified' ? `<button onclick="moveDealStage('${deal.id}', -1)" class="p-0.5 rounded hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"><span class="material-symbols-outlined text-xs">chevron_left</span></button>` : ''}
+                  ${stage !== 'Closing' ? `<button onclick="moveDealStage('${deal.id}', 1)" class="p-0.5 rounded hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"><span class="material-symbols-outlined text-xs">chevron_right</span></button>` : ''}
+                </div>
+              </div>
+            </div>
+          `;
+        });
+
+        grid.innerHTML += `
+          <div class="rounded-2xl p-4 bg-slate-100/50 dark:bg-slate-900/30 border border-slate-200 dark:border-slate-850 flex flex-col">
+            <div class="flex justify-between items-center mb-4 pb-2 border-b border-slate-800/10 dark:border-slate-800/50">
+              <div>
+                <h3 class="font-bold text-xs uppercase tracking-wider">${stage}</h3>
+                <span class="text-[9px] text-slate-500 font-bold uppercase">${stageDeals.length} Deals</span>
+              </div>
+              <span class="text-xs font-extrabold text-brand-blue dark:text-brand-accent">$${(totalSum/1000).toFixed(0)}k</span>
+            </div>
+            <div class="space-y-3 flex-grow overflow-y-auto max-h-[60vh] pr-1">
+              ${cardsHtml || '<div class="py-8 text-center text-[11px] text-slate-500 italic">No active deals</div>'}
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function moveDealStage(id, dir) {
+      const stages = ["Qualified", "Proposal", "Negotiation", "Closing"];
+      const deal = deals.find(d => d.id === id);
+      if (deal) {
+        const currentIdx = stages.indexOf(deal.stage);
+        const nextIdx = currentIdx + dir;
+        if (nextIdx >= 0 && nextIdx < stages.length) {
+          deal.stage = stages[nextIdx];
+          addActivity("Deal Stage Movement", `"${deal.title}" shifted to ${deal.stage}.`, "deal");
+        }
+      }
+    }
+
+    // --- View 4: Tasks Board ---
+    function renderTasks() {
+      const grid = document.getElementById("tasks-pipeline-grid");
+      grid.innerHTML = "";
+
+      const cols = ["TODO", "IN_PROGRESS", "IN_REVIEW", "DONE"];
+      cols.forEach(col => {
+        const colTasks = tasks.filter(t => t.status === col);
+        let tasksHtml = "";
+
+        colTasks.forEach(task => {
+          let commentsHtml = "";
+          task.comments.forEach(c => {
+            commentsHtml += `
+              <div class="text-[9px] bg-slate-950/20 p-1.5 rounded leading-normal">
+                <span class="font-bold text-slate-400">${c.author}: </span>
+                <span>${c.content}</span>
+              </div>
+            `;
+          });
+
+          tasksHtml += `
+            <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm flex flex-col justify-between">
+              <div class="flex justify-between items-start gap-1.5 mb-2">
+                <h4 class="text-xs font-bold leading-snug">${task.title}</h4>
+                <span class="text-[8px] font-extrabold uppercase px-1.5 py-0.5 rounded shrink-0 ${
+                  task.priority === 'Urgent' ? 'bg-red-500/10 text-red-500' : 'bg-slate-500/10 text-slate-400'
+                }">${task.priority}</span>
+              </div>
+              <p class="text-[10px] text-slate-500 leading-normal mb-3 line-clamp-2">${task.description || 'No extra guidelines'}</p>
+
+              <div class="flex items-center justify-between text-[9px] text-slate-500 pt-2 border-t border-slate-100 dark:border-slate-800">
+                <span class="font-semibold text-brand-accent">${task.assignee}</span>
+                <span>Due ${task.dueDate}</span>
+              </div>
+
+              <!-- Comments Section -->
+              <div class="mt-3 pt-2 border-t border-slate-100 dark:border-slate-800">
+                <p class="text-[9px] font-bold text-slate-400 mb-1.5 flex items-center gap-1">
+                  <span class="material-symbols-outlined text-[10px]">chat</span>
+                  <span>${task.comments.length} Comments</span>
+                </p>
+                <div class="space-y-1 max-h-24 overflow-y-auto mb-2 pr-0.5">
+                  ${commentsHtml}
+                </div>
+                <form onsubmit="postComment(event, '${task.id}')" class="flex gap-1">
+                  <input required type="text" placeholder="Write feedback..." class="text-[9px] flex-grow border border-slate-200 dark:border-slate-800 rounded px-1.5 py-0.5 focus:outline-none focus:border-brand-blue bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100"/>
+                  <button type="submit" class="bg-brand-blue hover:brightness-110 text-white rounded p-0.5 px-2 text-[9px] font-bold cursor-pointer">Post</button>
+                </form>
+              </div>
+
+              <!-- Mover utilities -->
+              <div class="flex justify-end gap-1.5 mt-3 text-[10px] font-bold">
+                ${col !== 'TODO' ? `<button onclick="shiftTaskStatus('${task.id}', -1)" class="p-1 rounded text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer">Prev</button>` : ''}
+                ${col !== 'DONE' ? `<button onclick="shiftTaskStatus('${task.id}', 1)" class="p-1 rounded text-brand-blue hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer">Next</button>` : ''}
+              </div>
+            </div>
+          `;
+        });
+
+        grid.innerHTML += `
+          <div class="rounded-2xl p-4 bg-slate-100/50 dark:bg-slate-900/30 border border-slate-200 dark:border-slate-850 flex flex-col">
+            <div class="flex justify-between items-center mb-4 pb-2 border-b border-slate-800/10 dark:border-slate-800/50">
+              <h3 class="font-bold text-xs uppercase tracking-wider">${col.replace("_", " ")}</h3>
+              <span class="text-[10px] bg-slate-800 text-slate-300 font-bold px-2 py-0.5 rounded-full">${colTasks.length}</span>
+            </div>
+            <div class="space-y-3 min-h-[50vh]">
+              ${tasksHtml || '<div class="py-8 text-center text-[11px] text-slate-500 italic">No tasks assigned</div>'}
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function shiftTaskStatus(id, dir) {
+      const cols = ["TODO", "IN_PROGRESS", "IN_REVIEW", "DONE"];
+      const task = tasks.find(t => t.id === id);
+      if (task) {
+        const currentIdx = cols.indexOf(task.status);
+        const nextIdx = currentIdx + dir;
+        if (nextIdx >= 0 && nextIdx < cols.length) {
+          task.status = cols[nextIdx];
+          addActivity("Task Movement Logged", `Task "${task.title}" updated status to ${task.status}.`, "task");
+        }
+      }
+    }
+
+    function postComment(e, taskId) {
+      e.preventDefault();
+      const input = e.target.querySelector("input");
+      const content = input.value.trim();
+      if (!content) return;
+
+      const task = tasks.find(t => t.id === taskId);
+      if (task) {
+        const comment = {
+          id: "c_" + Date.now(),
+          author: "Alex Lopez",
+          content,
+          date: "Just now"
+        };
+        task.comments.push(comment);
+        input.value = "";
+        addActivity("Comment Logged", `Comment added to task "${task.title}".`, "task");
+      }
+    }
+
+    // --- View 5: AI Assistant ---
+    function renderAIAssistant() {
+      const leadSelector = document.getElementById("ai-lead-selector");
+      leadSelector.innerHTML = "";
+
+      leads.forEach(l => {
+        leadSelector.innerHTML += `<option value="${l.id}" ${l.id === currentAILeadId ? 'selected' : ''}>${l.name} (${l.company})</option>`;
+      });
+
+      performAIAnalysis();
+      renderAIChat();
+    }
+
+    function performAIAnalysis() {
+      const leadId = document.getElementById("ai-lead-selector").value;
+      currentAILeadId = leadId;
+      const lead = leads.find(l => l.id === leadId);
+
+      const scoreContainer = document.getElementById("ai-score-container");
+      if (!lead) {
+        scoreContainer.innerHTML = `<div class="col-span-3 text-center p-4 text-slate-500">Please register a lead first inside Leads tab to analyze.</div>`;
+        return;
+      }
+
+      // Calculate score probability
+      let score = 50;
+      let factorsHtml = "";
+
+      if (lead.email.endsWith(".com") || lead.email.endsWith(".io")) {
+        score += 15;
+        factorsHtml += `
+          <div class="flex gap-2 text-xs font-semibold items-start text-emerald-500">
+            <span class="material-symbols-outlined text-sm font-bold">check</span>
+            <span>Corporate domain confirmed (+15%)</span>
+          </div>
+        `;
+      } else {
+        score -= 10;
+        factorsHtml += `
+          <div class="flex gap-2 text-xs font-semibold items-start text-red-500">
+            <span class="material-symbols-outlined text-sm font-bold">close</span>
+            <span>Public or free email provider used (-10%)</span>
+          </div>
+        `;
+      }
+
+      if (lead.value >= 100000) {
+        score += 20;
+        factorsHtml += `
+          <div class="flex gap-2 text-xs font-semibold items-start text-emerald-500">
+            <span class="material-symbols-outlined text-sm font-bold">check</span>
+            <span>Enterprise potential contract size over $100k (+20%)</span>
+          </div>
+        `;
+      } else if (lead.value > 30000) {
+        score += 10;
+        factorsHtml += `
+          <div class="flex gap-2 text-xs font-semibold items-start text-emerald-500">
+            <span class="material-symbols-outlined text-sm font-bold">check</span>
+            <span>Mid-tier contract potential size (+10%)</span>
+          </div>
+        `;
+      }
+
+      if (lead.priority === "Urgent" || lead.priority === "High") {
+        score += 15;
+        factorsHtml += `
+          <div class="flex gap-2 text-xs font-semibold items-start text-emerald-500">
+            <span class="material-symbols-outlined text-sm font-bold">check</span>
+            <span>Urgency flag set to high (+15%)</span>
+          </div>
+        `;
+      }
+
+      if (lead.status === "Qualified") {
+        score += 10;
+        factorsHtml += `
+          <div class="flex gap-2 text-xs font-semibold items-start text-emerald-500">
+            <span class="material-symbols-outlined text-sm font-bold">check</span>
+            <span>Lead status vetted & Qualified (+10%)</span>
+          </div>
+        `;
+      } else if (lead.status === "New") {
+        score -= 5;
+        factorsHtml += `
+          <div class="flex gap-2 text-xs font-semibold items-start text-slate-400">
+            <span class="material-symbols-outlined text-sm font-bold">close</span>
+            <span>Lead is brand new & uncontacted (-5%)</span>
+          </div>
+        `;
+      }
+
+      const finalScore = Math.min(Math.max(score, 5), 98);
+
+      scoreContainer.innerHTML = `
+        <div class="flex flex-col items-center justify-center p-4 border border-slate-200 dark:border-slate-800 rounded-xl bg-slate-50 dark:bg-slate-950/20 text-center gap-1 shrink-0">
+          <span class="text-[10px] font-bold text-slate-400 tracking-wider">WIN PROBABILITY</span>
+          <div class="text-4xl font-black text-brand-blue dark:text-brand-accent">${finalScore}%</div>
+          <span class="text-[8px] font-bold text-slate-500 uppercase">AI Predictive Confidence</span>
+        </div>
+
+        <div class="md:col-span-2 space-y-3">
+          <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider">AI Impact Factor Audit</h4>
+          <div class="space-y-2">
+            ${factorsHtml}
+          </div>
+        </div>
+      `;
+
+      // Draw outreach email template
+      generateEmailTemplate(lead);
+    }
+
+    function setEmailTone(tone) {
+      currentTone = tone;
+      document.querySelectorAll("#tone-selectors button").forEach(btn => {
+        btn.className = "text-[10px] font-bold px-2.5 py-1.5 rounded transition-all bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 cursor-pointer";
+      });
+      document.getElementById(`tone-${tone}`).className = "text-[10px] font-bold px-2.5 py-1.5 rounded transition-all bg-brand-blue text-white cursor-pointer";
+
+      const lead = leads.find(l => l.id === currentAILeadId);
+      if (lead) generateEmailTemplate(lead);
+    }
+
+    function generateEmailTemplate(lead) {
+      let draft = "";
+      if (currentTone === "Professional") {
+        draft = `Subject: Tailored solutions for ${lead.company}\n\nDear ${lead.name},\n\nI hope this email finds you well. I’ve been reviewing your profile at ${lead.company} and noticed alignment with our agency offerings.\n\nWe recently launched AI-driven tools that help client groups reduce overhead by 40%. Given your role, I’d love to coordinate a quick 10-minute introduction call next Tuesday at 2 PM EST.\n\nBest regards,\n${userProfile.name}\nAdlantic Agency`;
+      } else if (currentTone === "Friendly") {
+        draft = `Subject: Quick question about ${lead.company} 👋\n\nHi ${lead.name},\n\nHope you're having an awesome week!\n\nJust wanted to reach out because I saw what you guys are building over at ${lead.company} and it looks fantastic. We work with similar teams to accelerate their pipeline conversion by up to 3x.\n\nWould love to buy you a virtual coffee sometime next week and share some insights. Let me know if a Tuesday chat works!\n\nCheers,\n${userProfile.name.split(" ")[0]}`;
+      } else {
+        draft = `Subject: Critical: Optimizing operations at ${lead.company}\n\nHi ${lead.name},\n\nFollowing up on our brief sync regarding ${lead.company}. With current market demands, accelerating leads capture is critical.\n\nI have prepared a custom audit breakdown detailing $35k in immediate pipeline growth value. Can we schedule a brief alignment sync tomorrow morning?\n\nThanks,\n${userProfile.name}`;
+      }
+
+      document.getElementById("ai-email-textarea").value = draft;
+    }
+
+    function copyOutreachTemplate() {
+      const textarea = document.getElementById("ai-email-textarea");
+      textarea.select();
+      document.execCommand("copy");
+      alert("AI Outreach template copied to clipboard!");
+    }
+
+    function renderAIChat() {
+      const chatContainer = document.getElementById("ai-chat-history");
+      chatContainer.innerHTML = "";
+
+      aiChatHistory.forEach(msg => {
+        const isUser = msg.sender === "user";
+        chatContainer.innerHTML += `
+          <div class="flex ${isUser ? 'justify-end' : 'justify-start'}">
+            <div class="max-w-[85%] p-3 rounded-xl leading-relaxed ${
+              isUser ? 'bg-brand-blue text-white rounded-tr-none' : 'bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 rounded-tl-none border border-slate-200 dark:border-slate-800'
+            }">
+              ${msg.text}
+            </div>
+          </div>
+        `;
+      });
+      // Scroll to bottom
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+
+    function handleAIChatKeyPress(e) {
+      if (e.key === "Enter") sendAIChatMessage();
+    }
+
+    function sendAIChatMessage() {
+      const input = document.getElementById("ai-chat-input");
+      const text = input.value.trim();
+      if (!text) return;
+
+      aiChatHistory.push({ sender: "user", text });
+      input.value = "";
+      renderAIChat();
+
+      setTimeout(() => {
+        let reply = "I'm processing that. I can provide details on leads registry size, top deals values, or general CRM win rate.";
+        const query = text.toLowerCase();
+
+        if (query.includes("deal") || query.includes("largest") || query.includes("biggest")) {
+          const sorted = [...deals].sort((a,b) => b.value - a.value);
+          if (sorted.length > 0) {
+            reply = `Your largest deal in pipeline is "${sorted[0].title}" worth $${sorted[0].value.toLocaleString()} in stage "${sorted[0].stage}".`;
+          }
+        } else if (query.includes("lead") || query.includes("status")) {
+          reply = `We currently manage ${leads.length} total leads. Status split: ${leads.filter(l => l.status === 'New').length} New, ${leads.filter(l => l.status === 'Qualified').length} Qualified.`;
+        } else if (query.includes("win rate") || query.includes("revenue")) {
+          const won = deals.filter(d => d.stage === 'Closed Won');
+          const lost = deals.filter(d => d.stage === 'Closed Lost');
+          const wr = Math.round((won.length / ((won.length + lost.length) || 1)) * 100);
+          reply = `The company win rate sits at ${wr}%. Total closed-won revenue is $${won.reduce((s,d)=>s+d.value,0).toLocaleString()}.`;
+        } else if (query.includes("help") || query.includes("what can you")) {
+          reply = "Query examples: 'Who is my largest deal?', 'How many leads do we have?', or 'Show current pipeline win rate'.";
+        }
+
+        aiChatHistory.push({ sender: "bot", text: reply });
+        renderAIChat();
+      }, 700);
+    }
+
+    // --- View 6: Team ---
+    function renderTeam() {
+      const container = document.getElementById("team-members-list");
+      container.innerHTML = "";
+
+      // Dynamic metrics mapping
+      team.forEach(member => {
+        // Calculate dynamic managed deals
+        const repInitials = member.initials;
+        const repDeals = deals.filter(d => d.assignees.includes(repInitials));
+        const repVal = repDeals.reduce((sum, d) => sum + d.value, 0);
+
+        member.activeDeals = repDeals.length;
+        member.pipelineValue = repVal;
+
+        container.innerHTML += `
+          <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/10 flex justify-between items-center shadow-sm">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm ${member.avatarBg}">
+                ${member.initials}
+              </div>
+              <div>
+                <h4 class="text-sm font-bold text-slate-800 dark:text-slate-200">${member.name}</h4>
+                <p class="text-xs text-slate-500 font-semibold">${member.role}</p>
+              </div>
+            </div>
+            <div class="text-right">
+              <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">PIPELINE VALUE</p>
+              <p class="text-sm font-extrabold text-brand-blue dark:text-brand-accent">$${member.pipelineValue.toLocaleString()}</p>
+              <p class="text-[10px] text-slate-500 font-bold uppercase">${member.activeDeals} Active Deals</p>
+            </div>
+          </div>
+        `;
+      });
+
+      // Pipeline split percentage calculations
+      const totalDeals = deals.length || 1;
+      const stages = ["Qualified", "Proposal", "Negotiation", "Closing"];
+      stages.forEach(st => {
+        const count = deals.filter(d => d.stage === st).length;
+        const pct = Math.round((count / totalDeals) * 100);
+        document.getElementById(`dist-${st}-text`).innerText = `${pct}%`;
+        document.getElementById(`dist-${st}-bar`).style.width = `${pct}%`;
+      });
+    }
+
+    // --- View 7: Settings ---
+    function renderSettings() {
+      document.getElementById("settings-name").value = settings.name;
+      document.getElementById("settings-email").value = settings.email;
+      document.getElementById("settings-currency").value = settings.currency;
+      document.getElementById("settings-tax").value = settings.taxRate;
+
+      // Render Users list
+      const userList = document.getElementById("settings-users-list");
+      userList.innerHTML = "";
+      users.forEach(u => {
+        const isCurrent = u.username.toLowerCase() === userProfile.username.toLowerCase();
+        userList.innerHTML += `
+          <tr class="border-b border-slate-100 dark:border-slate-800 text-slate-700 dark:text-slate-350">
+            <td class="p-3 font-semibold">${u.name} ${isCurrent ? '<span class="text-[9px] text-pink-400 font-extrabold">(You)</span>' : ''}</td>
+            <td class="p-3 font-mono text-[11px]">${u.username}</td>
+            <td class="p-3">${u.role}</td>
+            <td class="p-3 text-right">
+              ${isCurrent ? '<span class="text-slate-400 text-[10px]">Active Session</span>' : `
+                <button onclick="deleteUserAccount('${u.username}')" class="text-red-500 hover:text-red-600 font-bold hover:underline cursor-pointer">
+                  Delete
+                </button>
+              `}
+            </td>
+          </tr>
+        `;
+      });
+    }
+
+    function handleSaveSettings(e) {
+      e.preventDefault();
+      settings.name = document.getElementById("settings-name").value;
+      settings.email = document.getElementById("settings-email").value;
+      settings.currency = document.getElementById("settings-currency").value;
+      settings.taxRate = parseInt(document.getElementById("settings-tax").value) || 0;
+
+      addActivity("Settings Updated", "Company profile variables updated.", "system");
+      saveState();
+      alert("Workspace configuration saved successfully!");
+    }
+
+    function handleCreateUserAccount(e) {
+      e.preventDefault();
+      const name = document.getElementById("newuser-name").value.trim();
+      const role = document.getElementById("newuser-role").value.trim();
+      const username = document.getElementById("newuser-username").value.trim().toLowerCase();
+      const password = document.getElementById("newuser-password").value.trim();
+
+      if (users.some(u => u.username.toLowerCase() === username)) {
+        alert("This username is already taken!");
+        return;
+      }
+
+      const colors = ["bg-blue-600", "bg-purple-600", "bg-pink-600", "bg-indigo-600", "bg-emerald-600", "bg-brand-blue"];
+      const randColor = colors[Math.floor(Math.random() * colors.length)];
+      const initials = name.split(" ").map(w => w[0]).join("").toUpperCase().substring(0, 2);
+
+      const newUser = { username, password, name, role, initials, avatarBg: randColor };
+      users.push(newUser);
+      
+      addActivity("Account Created", `Member account "${username}" was created.`, "system");
+      saveState();
+
+      document.getElementById("newuser-name").value = "";
+      document.getElementById("newuser-role").value = "";
+      document.getElementById("newuser-username").value = "";
+      document.getElementById("newuser-password").value = "";
+
+      renderSettings();
+    }
+
+    function deleteUserAccount(username) {
+      if (confirm(`Are you sure you want to delete account "${username}"?`)) {
+        users = users.filter(u => u.username.toLowerCase() !== username.toLowerCase());
+        addActivity("Account Deleted", `Member account "${username}" was deleted.`, "system");
+        saveState();
+        renderSettings();
+      }
+    }
+
+    function resetSystemData() {
+      if (confirm("Reset CRM database tables to default seed states? Your custom modifications will be lost.")) {
+        localStorage.clear();
+        leads = SEED_LEADS;
+        deals = SEED_DEALS;
+        tasks = SEED_TASKS;
+        team = SEED_TEAM;
+        activities = SEED_ACTIVITIES;
+        settings = SEED_SETTINGS;
+        users = SEED_USERS;
+        userProfile = SEED_USER_PROFILE;
+        saveState();
+        alert("CRM registry databases successfully seeded!");
+      }
+    }
+
+    // --- Modal Sheets Controllers ---
+
+    function openLeadModal() { document.getElementById("modal-Lead").classList.remove("hidden"); }
+    function closeLeadModal() { document.getElementById("modal-Lead").classList.add("hidden"); }
+
+    function openLeadDetails(id) {
+      const lead = leads.find(l => l.id === id);
+      if (!lead) return;
+
+      document.getElementById("det-name").innerText = lead.name;
+      document.getElementById("det-company").innerText = lead.company;
+      document.getElementById("det-email").innerText = lead.email || "No Email Provided";
+      document.getElementById("det-phone").innerText = lead.phone || "No Phone Provided";
+      document.getElementById("det-value").innerText = "$" + (lead.value || 0).toLocaleString();
+      document.getElementById("det-notes").innerText = lead.notes || "No extra guidelines or call logs.";
+
+      // Status badge styling
+      const statusBadge = document.getElementById("det-status");
+      statusBadge.innerText = lead.status;
+      statusBadge.className = `inline-block px-2.5 py-0.5 rounded-full font-extrabold uppercase tracking-wider text-[9px] ${
+        lead.status === 'New' ? 'bg-blue-500/10 text-blue-500 border border-blue-500/20' :
+        lead.status === 'Contacted' ? 'bg-amber-500/10 text-amber-500 border border-amber-500/20' :
+        lead.status === 'Qualified' ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20' :
+        lead.status === 'Nurturing' ? 'bg-purple-500/10 text-purple-500 border border-purple-500/20' :
+        'bg-red-500/10 text-red-500 border border-red-500/20'
+      }`;
+
+      // Priority badge styling
+      const priorityBadge = document.getElementById("det-priority");
+      priorityBadge.innerText = lead.priority;
+      priorityBadge.className = `inline-block px-2.5 py-0.5 rounded-full font-extrabold uppercase tracking-wider text-[9px] ${
+        lead.priority === 'Urgent' ? 'bg-red-500/10 text-red-500 border border-red-500/20' :
+        lead.priority === 'High' ? 'bg-orange-500/10 text-orange-500 border border-orange-500/20' :
+        lead.priority === 'Medium' ? 'bg-blue-500/10 text-blue-500 border border-blue-500/20' :
+        'bg-slate-500/10 text-slate-400 border border-slate-500/20'
+      }`;
+
+      // Avatar
+      const initials = lead.name.split(" ").map(w => w[0]).join("").toUpperCase().substring(0, 2);
+      document.getElementById("det-avatar").innerText = initials;
+
+      // AI score calculation
+      let score = 50;
+      if (lead.email.endsWith(".com") || lead.email.endsWith(".io")) score += 15;
+      else score -= 10;
+      if (lead.value >= 100005) score += 20;
+      else if (lead.value > 30000) score += 10;
+      if (lead.priority === "Urgent" || lead.priority === "High") score += 15;
+      if (lead.status === "Qualified") score += 10;
+      else if (lead.status === "New") score -= 5;
+      const finalScore = Math.min(Math.max(score, 5), 98);
+      document.getElementById("det-ai-score").innerText = finalScore + "%";
+
+      document.getElementById("modal-Lead-Details").classList.remove("hidden");
+    }
+
+    function closeLeadDetails() {
+      document.getElementById("modal-Lead-Details").classList.add("hidden");
+    }
+
+    function openDealModal() { document.getElementById("modal-Deal").classList.remove("hidden"); }
+    function closeDealModal() { document.getElementById("modal-Deal").classList.add("hidden"); }
+
+    function openTaskModal() { document.getElementById("modal-Task").classList.remove("hidden"); }
+    function closeTaskModal() { document.getElementById("modal-Task").classList.add("hidden"); }
+
+    function submitNewLead(e) {
+      e.preventDefault();
+      const name = document.getElementById("lead-name").value;
+      const company = document.getElementById("lead-company").value;
+      const email = document.getElementById("lead-email").value || `${name.toLowerCase().replace(" ","")}@${company.toLowerCase().replace(" ","")}.com`;
+      const phone = document.getElementById("lead-phone").value.trim() || "";
+      const val = parseFloat(document.getElementById("lead-value").value) || 0;
+      const status = document.getElementById("lead-status").value;
+      const priority = document.getElementById("lead-priority").value;
+      const notes = document.getElementById("lead-notes").value;
+
+      const lead = {
+        id: "l_" + Date.now(),
+        name, company, email, phone, value: val, status, priority, notes, lastActivity: "Just now"
+      };
+
+      leads.unshift(lead);
+      addActivity("Lead Profile Created", `${name} was added to ${company} pipeline registry.`, "lead");
+      closeLeadModal();
+
+      // Reset Form fields
+      document.getElementById("lead-name").value = "";
+      document.getElementById("lead-company").value = "";
+      document.getElementById("lead-email").value = "";
+      document.getElementById("lead-phone").value = "";
+      document.getElementById("lead-value").value = "";
+      document.getElementById("lead-notes").value = "";
+    }
+
+    function submitNewDeal(e) {
+      e.preventDefault();
+      const title = document.getElementById("deal-title").value;
+      const company = document.getElementById("deal-company").value;
+      const val = parseFloat(document.getElementById("deal-value").value) || 0;
+      const stage = document.getElementById("deal-stage").value;
+      const priority = document.getElementById("deal-priority").value;
+      const assignInput = document.getElementById("deal-assignees").value || "JD";
+      const reps = assignInput.split(",").map(i => i.trim().toUpperCase());
+
+      const deal = {
+        id: "d_" + Date.now(),
+        title, company, value: val, stage, priority, assignees: reps, dueDate: "2026-12-01"
+      };
+
+      deals.unshift(deal);
+      addActivity("Sales Proposal Logged", `"${title}" deal created for ${company}.`, "deal");
+      closeDealModal();
+
+      document.getElementById("deal-title").value = "";
+      document.getElementById("deal-company").value = "";
+      document.getElementById("deal-value").value = "";
+      document.getElementById("deal-assignees").value = "";
+    }
+
+    function submitNewTask(e) {
+      e.preventDefault();
+      const title = document.getElementById("task-title").value;
+      const description = document.getElementById("task-description").value;
+      const dueDate = document.getElementById("task-duedate").value || "2026-06-30";
+      const priority = document.getElementById("task-priority").value;
+      const assignee = document.getElementById("task-assignee").value;
+      const status = document.getElementById("task-status").value;
+
+      const task = {
+        id: "t_" + Date.now(),
+        title, description, dueDate, priority, assignee, status, comments: []
+      };
+
+      tasks.unshift(task);
+      addActivity("Task Assigned", `"${title}" assigned to ${assignee}.`, "task");
+      closeTaskModal();
+
+      document.getElementById("task-title").value = "";
+      document.getElementById("task-description").value = "";
+      document.getElementById("task-duedate").value = "";
+    }
+
+    // --- Profile Modal Controllers ---
+    function openProfileModal() {
+      document.getElementById("profile-name").value = userProfile.name;
+      document.getElementById("profile-role").value = userProfile.role;
+      document.getElementById("profile-avatar-color").value = userProfile.avatarBg;
+      document.getElementById("modal-Profile").classList.remove("hidden");
+    }
+    
+    function closeProfileModal() {
+      document.getElementById("modal-Profile").classList.add("hidden");
+    }
+    
+    function submitUserProfile(e) {
+      e.preventDefault();
+      userProfile.name = document.getElementById("profile-name").value;
+      userProfile.role = document.getElementById("profile-role").value;
+      userProfile.avatarBg = document.getElementById("profile-avatar-color").value;
+      userProfile.initials = userProfile.name.split(" ").map(w => w[0]).join("").toUpperCase();
+
+      addActivity("Profile Updated", "User account profile details modified.", "system");
+      closeProfileModal();
+      saveState();
+    }
+
+    // --- Authentication System Handlers ---
+    function handleLoginSubmit(e) {
+      e.preventDefault();
+      const user = document.getElementById("login-username").value.trim();
+      const pass = document.getElementById("login-password").value.trim();
+      const err = document.getElementById("login-error");
+
+      const match = users.find(u => u.username.toLowerCase() === user.toLowerCase() && u.password === pass);
+
+      if (match) {
+        err.classList.add("hidden");
+        userProfile = match;
+        localStorage.setItem("Adlantic-user-profile", JSON.stringify(userProfile));
+        sessionStorage.setItem("Adlantic-authenticated", "true");
+        
+        // Smooth slideout transition
+        const screen = document.getElementById("login-screen");
+        screen.style.opacity = "0";
+        screen.style.transition = "opacity 0.25s ease";
+        setTimeout(() => {
+          screen.classList.add("hidden");
+        }, 250);
+
+        addActivity("Auth Success", `${userProfile.name} logged in successfully.`, "system");
+        renderAll();
+      } else {
+        err.innerText = "Invalid email or password!";
+        err.className = "text-red-500 text-[11px] font-bold block";
+        err.classList.remove("hidden");
+      }
+    }
+
+    function toggleAuthForm(showSignup) {
+      const loginForm = document.getElementById("login-form");
+      const signupForm = document.getElementById("signup-form");
+      const toggleText = document.getElementById("auth-toggle-text");
+      const errorDivLogin = document.getElementById("login-error");
+      const errorDivSignup = document.getElementById("signup-error");
+      
+      errorDivLogin.classList.add("hidden");
+      errorDivSignup.classList.add("hidden");
+
+      if (showSignup) {
+        loginForm.classList.add("hidden");
+        signupForm.classList.remove("hidden");
+        toggleText.innerHTML = `Already have an account? <button onclick="toggleAuthForm(false)" class="text-pink-400 hover:underline font-bold bg-transparent border-0 cursor-pointer">Log In</button>`;
+      } else {
+        loginForm.classList.remove("hidden");
+        signupForm.classList.add("hidden");
+        toggleText.innerHTML = `Don't have an account? <button onclick="toggleAuthForm(true)" class="text-pink-400 hover:underline font-bold bg-transparent border-0 cursor-pointer">Sign Up</button>`;
+      }
+    }
+
+    function handleSignupSubmit(e) {
+      e.preventDefault();
+      const name = document.getElementById("signup-name").value.trim();
+      const email = document.getElementById("signup-email").value.trim().toLowerCase();
+      const password = document.getElementById("signup-password").value.trim();
+      const err = document.getElementById("signup-error");
+      const success = document.getElementById("signup-success");
+
+      if (users.some(u => u.username.toLowerCase() === email)) {
+        err.classList.remove("hidden");
+        success.classList.add("hidden");
+        return;
+      }
+
+      err.classList.add("hidden");
+      success.classList.remove("hidden");
+
+      const colors = ["bg-blue-600", "bg-purple-600", "bg-pink-600", "bg-indigo-600", "bg-emerald-600", "bg-brand-blue"];
+      const randColor = colors[Math.floor(Math.random() * colors.length)];
+      const initials = name.split(" ").map(w => w[0]).join("").toUpperCase().substring(0, 2);
+
+      const newUser = { 
+        username: email, 
+        password: password, 
+        name: name, 
+        role: "Account Executive", 
+        initials: initials, 
+        avatarBg: randColor 
+      };
+
+      users.push(newUser);
+      
+      // Push to dynamic team roster
+      team.push({
+        id: "t_" + Date.now(),
+        name: name,
+        role: "Account Executive",
+        initials: initials,
+        activeDeals: 0,
+        pipelineValue: 0,
+        avatarBg: randColor
+      });
+
+      addActivity("User Registered", `New account "${email}" created.`, "system");
+      saveState();
+
+      document.getElementById("signup-name").value = "";
+      document.getElementById("signup-email").value = "";
+      document.getElementById("signup-password").value = "";
+
+      setTimeout(() => {
+        success.classList.add("hidden");
+        toggleAuthForm(false);
+        document.getElementById("login-username").value = email;
+      }, 1000);
+    }
+
+    function handleLogout() {
+      sessionStorage.removeItem("Adlantic-authenticated");
+      closeProfileModal();
+      
+      const screen = document.getElementById("login-screen");
+      screen.style.opacity = "1";
+      screen.classList.remove("hidden");
+      
+      document.getElementById("login-username").value = "";
+      document.getElementById("login-password").value = "";
+      document.getElementById("login-error").classList.add("hidden");
+      
+      addActivity("Auth Session Ended", "User logged out explicitly.", "system");
+    }
+
+    // --- Onload Bootstrap ---
+    function bootstrapApp() {
+      console.log("=== CRM Bootstrap ===");
+      console.log("Running protocol:", window.location.protocol);
+
+      // Warn if running directly via file protocol
+      if (window.location.protocol === "file:") {
+        console.warn("WARNING: Running via file:// protocol. LocalStorage persistence might not work across browser restarts!");
+        const errorDiv = document.getElementById("login-error");
+        if (errorDiv) {
+          errorDiv.innerText = "Notice: Running via local file. Registered accounts may not persist across browser restarts.";
+          errorDiv.className = "text-amber-500 text-[11px] font-bold block";
+          errorDiv.classList.remove("hidden");
+        }
+      }
+
+      // Migrate legacy usernames to Shivansh
+      if (userProfile && (userProfile.name === "Alex Lopez" || userProfile.name === "Nitin")) {
+        userProfile = SEED_USER_PROFILE;
+        localStorage.setItem("Adlantic-user-profile", JSON.stringify(userProfile));
+      }
+
+      if (!Array.isArray(users)) {
+        users = SEED_USERS;
+        localStorage.setItem("Adlantic-users", JSON.stringify(users));
+      }
+
+      // Ensure default users exist for easy login
+      if (!users.find(u => u && u.username === "shivansh@gmail.com")) {
+        users.push({ username: "shivansh@gmail.com", password: "password", name: "Shivansh", role: "Administrator", avatarBg: "bg-brand-blue", initials: "S" });
+        localStorage.setItem("Adlantic-users", JSON.stringify(users));
+      }
+      if (!users.find(u => u && u.username === "admin")) {
+        users.push({ username: "admin", password: "password", name: "Admin", role: "Administrator", avatarBg: "bg-brand-blue", initials: "A" });
+        localStorage.setItem("Adlantic-users", JSON.stringify(users));
+      }
+
+      console.log("Registered Users in Database:", users.map(u => u.username));
+
+      const isAuth = sessionStorage.getItem("Adlantic-authenticated") === "true";
+      const screen = document.getElementById("login-screen");
+      if (isAuth) {
+        screen.classList.add("hidden");
+      } else {
+        screen.classList.remove("hidden");
+      }
+      renderAll();
+    }
+
+    bootstrapApp();
+  </script>
+</body>
+</html>
+
