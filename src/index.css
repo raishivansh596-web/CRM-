@@ -1,0 +1,94 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  
+  /* AdLantic Media Brand Colors */
+  --color-primary: #120a26;
+  --color-on-primary: #ffffff;
+  --color-primary-container: #1b1136;
+  --color-on-primary-container: #a59ebd;
+  
+  --color-secondary: #7c3aed;
+  --color-on-secondary: #ffffff;
+  --color-secondary-container: #ec4899;
+  --color-on-secondary-container: #ffffff;
+  
+  --color-tertiary-container: #0a0518;
+  --color-on-tertiary-container: #ea580c;
+  
+  --color-background: #f8f6fc;
+  --color-on-background: #0a0518;
+  
+  --color-surface: #f8f6fc;
+  --color-on-surface: #0a0518;
+  --color-on-surface-variant: #5f5e6d;
+  
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #f4effc;
+  --color-surface-container: #eae2f8;
+  --color-surface-container-high: #decff5;
+  --color-surface-container-highest: #d1baf1;
+  
+  --color-outline: #7c7a88;
+  --color-outline-variant: #cac8d4;
+  
+  --color-error: #ba1a1a;
+  --color-error-container: #ffdad6;
+  --color-on-error-container: #93000a;
+}
+
+@layer base {
+  body {
+    @apply bg-background text-on-background font-sans antialiased transition-colors duration-200;
+  }
+}
+
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  display: inline-block;
+  line-height: 1;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(100, 116, 139, 0.2);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(100, 116, 139, 0.4);
+}
+
+/* Glassmorphism utility */
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.dark .glass {
+  background: rgba(15, 23, 42, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Premium micro-animations for buttons */
+.btn-animate {
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+}
+.btn-animate:hover {
+  transform: scale(1.025) translateY(-1px);
+  filter: brightness(1.1);
+}
+.btn-animate:active {
+  transform: scale(0.97) translateY(0);
+  filter: brightness(0.95);
+}
